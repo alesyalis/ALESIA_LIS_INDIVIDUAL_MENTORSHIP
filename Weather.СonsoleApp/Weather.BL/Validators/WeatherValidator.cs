@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Weather.BL.Validators
+﻿namespace Weather.BL.Validators
 {
     public class WeatherValidator
     {
