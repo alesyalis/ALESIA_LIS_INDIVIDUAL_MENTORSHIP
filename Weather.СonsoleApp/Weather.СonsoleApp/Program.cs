@@ -1,27 +1,29 @@
-﻿using Weather.BL.Validators;
-using System;
+﻿using System;
 using Weather.BL.Services;
+using System.Threading.Tasks;
 
 namespace Weather.СonsoleApp
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            var weatherServices = new WeatherServicesv();
+            var weatherServices = new WeatherServicese();
 
             while (true)
             {
-                Console.WriteLine("Enter the name of the city");
-                string city = Console.ReadLine();
+                try
+                {
+                    Console.WriteLine("Enter the name of the city");
 
-                if (WeatherValidator.IsValidCityName(city))
-                {
-                    weatherServices.GetWeather(city);
+                    var weather = await weatherServices.GetWeatherAsync();
+
+                    Console.WriteLine("В {0}: {1} °C {2} ", weather.Name, weather.Main.Temp,
+                                                              weatherServices.WeatherComment(weather.Main.Temp));
                 }
-                else
+                catch (Exception ex)
                 {
-                    Console.WriteLine("Entering the city is required");
+                    Console.WriteLine(ex.Message);
                 }
             }
         }

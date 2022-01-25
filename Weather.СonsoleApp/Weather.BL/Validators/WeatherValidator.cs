@@ -2,7 +2,7 @@
 {
     public class WeatherValidator
     {
-        public static bool IsValidCityName(string cityName)
+        public  bool IsValidCityName(string cityName)
         {
             if (cityName != string.Empty)
             {
