@@ -3,12 +3,13 @@ using System.IO;
 using System.Net;
 using Weather.DataAccess.Models;
 using System;
+using Weather.BL.Services.Abstract;
 
 namespace Weather.BL.Services
 {
-    public class WeatherServices
+    public class WeatherServicesv : IWeatherServices
     {
-        public static void GetWeather(string cityName)
+        public void GetWeather(string cityName)
         {
             try
             {
@@ -41,7 +42,7 @@ namespace Weather.BL.Services
                 }
             }
         }
-        public static string WeatherComment(double temp)
+        private string WeatherComment(double temp)
         {
             if (temp < 0)
                 return "Dress warmly.";

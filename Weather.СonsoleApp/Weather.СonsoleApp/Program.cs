@@ -2,13 +2,14 @@
 using System;
 using Weather.BL.Services;
 
-
 namespace Weather.СonsoleApp
 {
     internal class Program
     {
         static void Main(string[] args)
         {
+            var weatherServices = new WeatherServicesv();
+
             while (true)
             {
                 Console.WriteLine("Enter the name of the city");
@@ -16,7 +17,7 @@ namespace Weather.СonsoleApp
 
                 if (WeatherValidator.IsValidCityName(city))
                 {
-                    WeatherServices.GetWeather(city);
+                    weatherServices.GetWeather(city);
                 }
                 else
                 {
