@@ -10,12 +10,12 @@ namespace Weather.DataAccess.Repositories
 {
     public class WeatherRepository : IWeatherRepositoty
     {
-        public async Task<WeatherResponse> GetWeatherAsync(string cityName)
+        public async Task<WeatherResponse> GetWeatherAsync(string cityName, string key)
         {
             try
             {
-                var url = string.Format("http://api.openweathermap.org/data/2.5/weather?q={0}&units=metric&appid=8e943ed8b016561c73b8a1920366ef79", cityName);
-                HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+                var responseWeather = string.Format("http://api.openweathermap.org/data/2.5/weather?q={0}&units=metric&appid={1}", cityName, key);
+                HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(responseWeather);
 
                 HttpWebResponse httpWebResponse = (HttpWebResponse)httpWebRequest.GetResponse();
 
@@ -43,7 +43,8 @@ namespace Weather.DataAccess.Repositories
                 }
 
                 var name = Console.ReadLine();
-                return await GetWeatherAsync(name);
+
+                return await GetWeatherAsync(name, key);
             }
         }
     }

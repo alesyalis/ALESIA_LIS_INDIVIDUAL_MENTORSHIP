@@ -5,6 +5,6 @@ namespace Weather.DataAccess.Repositories.Abstrdact
 {
     public interface IWeatherRepositoty
     {
-        Task<WeatherResponse> GetWeatherAsync(string cityName);
+        Task<WeatherResponse> GetWeatherAsync(string cityName, string key);
     }
 }

@@ -8,6 +8,8 @@ namespace Weather.СonsoleApp
     {
         static async Task Main(string[] args)
         {
+            var key = System.Configuration.ConfigurationManager.AppSettings["apiKey"];
+
             var weatherServices = new WeatherServicese();
 
             while (true)
@@ -16,7 +18,7 @@ namespace Weather.СonsoleApp
                 {
                     Console.WriteLine("Enter the name of the city");
 
-                    var weather = await weatherServices.GetWeatherAsync();
+                    var weather = await weatherServices.GetWeatherAsync(key);
 
                     Console.WriteLine("В {0}: {1} °C {2} ", weather.Name, weather.Main.Temp,
                                                               weatherServices.WeatherComment(weather.Main.Temp));
