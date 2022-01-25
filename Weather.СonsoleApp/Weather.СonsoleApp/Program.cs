@@ -1,4 +1,7 @@
 ﻿using Weather.BL.Validators;
+using System;
+using Weather.BL.Services;
+
 
 namespace Weather.СonsoleApp
 {
@@ -8,16 +11,16 @@ namespace Weather.СonsoleApp
         {
             while (true)
             {
-                System.Console.WriteLine("Enter the name of the city");
-                string city = System.Console.ReadLine();
+                Console.WriteLine("Enter the name of the city");
+                string city = Console.ReadLine();
 
                 if (WeatherValidator.IsValidCityName(city))
                 {
-                    BL.Services.Weather.GetWeather(city);
+                    WeatherServices.GetWeather(city);
                 }
                 else
                 {
-                    System.Console.WriteLine("Entering the city is required");
+                    Console.WriteLine("Entering the city is required");
                 }
             }
         }

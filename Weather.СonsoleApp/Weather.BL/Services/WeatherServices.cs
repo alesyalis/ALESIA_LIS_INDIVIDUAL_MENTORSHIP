@@ -2,10 +2,11 @@
 using System.IO;
 using System.Net;
 using Weather.DataAccess.Models;
+using System;
 
 namespace Weather.BL.Services
 {
-    public class Weather
+    public class WeatherServices
     {
         public static void GetWeather(string cityName)
         {
@@ -25,7 +26,7 @@ namespace Weather.BL.Services
 
                 WeatherResponse weatherResponse = JsonConvert.DeserializeObject<WeatherResponse>(response);
 
-                System.Console.WriteLine("В {0}: {1} °C {2} ", weatherResponse.Name, weatherResponse.Main.Temp,
+                Console.WriteLine("В {0}: {1} °C {2} ", weatherResponse.Name, weatherResponse.Main.Temp,
                                                               WeatherComment(weatherResponse.Main.Temp));
             }
             catch (WebException ex)
@@ -35,24 +36,23 @@ namespace Weather.BL.Services
                     var resp = (HttpWebResponse)ex.Response;
                     if (resp.StatusCode == HttpStatusCode.NotFound)
                     {
-                        System.Console.WriteLine("City not found");
+                        Console.WriteLine("City not found");
                     }
                 }
             }
         }
         public static string WeatherComment(double temp)
         {
-            var desc = "";
             if (temp < 0)
-                return desc = "Dress warmly.";
+                return "Dress warmly.";
             if (temp >= 0 && temp <= 20)
-                return desc = "It's fresh.";
+                return "It's fresh.";
             if (temp > 20 && temp <= 30)
-                return desc = "Good weather!";
+                return "Good weather!";
             if (temp > 30)
-                return desc = "It's time to go to the beach";
+                return "It's time to go to the beach";
             else
-                return desc = "Nothing";
+                return "Nothing";
         }
     }
 }
