@@ -10,5 +10,7 @@ namespace Weather.BL.DTOs
         public TemperatureInfoDTO Main { get; set; }
 
         public string Name { get; set; }
+
+        
     }
 }

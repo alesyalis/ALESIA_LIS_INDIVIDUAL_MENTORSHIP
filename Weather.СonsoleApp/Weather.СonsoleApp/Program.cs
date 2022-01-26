@@ -20,8 +20,7 @@ namespace Weather.СonsoleApp
 
                     var weather = await weatherServices.GetWeatherAsync(key);
 
-                    Console.WriteLine("В {0}: {1} °C {2} ", weather.Name, weather.Main.Temp,
-                                                              weatherServices.WeatherComment(weather.Main.Temp));
+                    Console.WriteLine("В {0}: {1} °C {2} ", weather.Name, weather.Main.Temp, weather.Main.Description);
                 }
                 catch (Exception ex)
                 {

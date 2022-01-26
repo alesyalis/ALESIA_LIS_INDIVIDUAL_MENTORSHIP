@@ -17,28 +17,13 @@ namespace Weather.BL.Services
         {
             _weatherValidator = new WeatherValidator(); 
             var cityName = Console.ReadLine();
+            _weatherValidator.IsValidCityName(cityName);    
             if (_weatherValidator.IsValidCityName(cityName))
             {
-                try
-                {
-                    _weatherRepositoty = new WeatherRepository();
-                    var weather = await _weatherRepositoty.GetWeatherAsync(cityName, key);
-                    return MappWeather(weather);
-                }
-                catch (WebException ex)
-                {
-                    if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response != null)
-                    {
-                        var resp = (HttpWebResponse)ex.Response;
-                        if (resp.StatusCode == HttpStatusCode.NotFound)
-                        {
-                            Console.WriteLine("\nCity not found, reaped please");
-                        }
-                    }
-                    var name = Console.ReadLine();
-                    var weather = await _weatherRepositoty.GetWeatherAsync(name, key);
-                    return MappWeather(weather);
-                }
+                _weatherRepositoty = new WeatherRepository();
+
+                var weather = await _weatherRepositoty.GetWeatherAsync(cityName, key);
+                return MappWeather(weather);
             }
             else
             {
@@ -51,12 +36,16 @@ namespace Weather.BL.Services
             var weatherDTO = new WeatherResponseDTO 
             { 
                 Name = weatherResponse.Name,
-                Main = new TemperatureInfoDTO { Temp = weatherResponse.Main.Temp}
+                Main = new TemperatureInfoDTO 
+                { 
+                    Temp = weatherResponse.Main.Temp,
+                    Description = WeatherDescription(weatherResponse.Main.Temp)
+                },
             };
 
             return weatherDTO;  
         }
-        public string WeatherComment(double temp)
+       private string WeatherDescription(double temp)
         {
             if (temp < 0)
                 return "Dress warmly.";
