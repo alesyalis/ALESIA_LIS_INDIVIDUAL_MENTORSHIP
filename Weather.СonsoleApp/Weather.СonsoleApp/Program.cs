@@ -24,7 +24,7 @@ namespace Weather.СonsoleApp
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    Console.WriteLine("City not found\n" + ex.Message);
                 }
             }
         }
