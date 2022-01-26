@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using Weather.BL.DTOs;
 using Weather.BL.Services.Abstract;
@@ -18,9 +19,26 @@ namespace Weather.BL.Services
             var cityName = Console.ReadLine();
             if (_weatherValidator.IsValidCityName(cityName))
             {
-                _weatherRepositoty = new WeatherRepository();
-                var weather = await _weatherRepositoty.GetWeatherAsync(cityName, key);
-                return MappWeather(weather);
+                try
+                {
+                    _weatherRepositoty = new WeatherRepository();
+                    var weather = await _weatherRepositoty.GetWeatherAsync(cityName, key);
+                    return MappWeather(weather);
+                }
+                catch (WebException ex)
+                {
+                    if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response != null)
+                    {
+                        var resp = (HttpWebResponse)ex.Response;
+                        if (resp.StatusCode == HttpStatusCode.NotFound)
+                        {
+                            Console.WriteLine("\nCity not found, reaped please");
+                        }
+                    }
+                    var name = Console.ReadLine();
+                    var weather = await _weatherRepositoty.GetWeatherAsync(name, key);
+                    return MappWeather(weather);
+                }
             }
             else
             {
