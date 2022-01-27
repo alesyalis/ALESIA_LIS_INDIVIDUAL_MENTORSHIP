@@ -4,8 +4,7 @@ using System.Text;
 
 namespace Weather.BL.Validators.Abstract
 {
-    public interface IWeatherValidator
+    public interface IValidator<T> where T : class
     {
-        bool IsValidCityName(string cityName);
     }
 }

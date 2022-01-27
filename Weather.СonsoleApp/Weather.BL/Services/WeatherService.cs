@@ -1,35 +1,27 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Weather.BL.DTOs;
 using Weather.BL.Services.Abstract;
 using Weather.BL.Validators;
 using Weather.DataAccess.Models;
-using Weather.DataAccess.Repositories;
+using Weather.DataAccess.Repositories.Abstrdact;
 
 namespace Weather.BL.Services
 {
     public class WeatherServicese : IWeatherService
     {
-        private WeatherRepository _weatherRepositoty;
+        private readonly IWeatherRepository _weatherRepository;
         private WeatherValidator _weatherValidator;
+        public WeatherServicese(IWeatherRepository weatherRepository)
+        {
+            _weatherRepository = weatherRepository;
+        }
         public async Task<WeatherResponseDTO> GetWeatherAsync(string cityName)
         {
-            _weatherValidator = new WeatherValidator(); 
-            
+            _weatherValidator = new WeatherValidator();
 
-            if (_weatherValidator.IsValidCityName(cityName))
-            {
-                _weatherRepositoty = new WeatherRepository();
-
-                var weather = await _weatherRepositoty.GetWeatherAsync(cityName);
-                return MappWeather(weather);
-            }
-            else
-            {
-               return new WeatherResponseDTO{
-                   ErrorMessage = "Entering the city is required"
-               };
-            }
+            var weather = await _weatherRepository.GetWeatherAsync(cityName);
+            _weatherValidator.ValidateCityName(weather);
+            return MappWeather(weather);
         }
         private WeatherResponseDTO MappWeather(WeatherResponse weatherResponse)
         {

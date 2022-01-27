@@ -1,20 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using Weather.BL.Validators.Abstract;
+using Weather.DataAccess.Models;
 
 namespace Weather.BL.Validators
 {
-    public class WeatherValidator
-    {
-        public bool IsValidCityName(string cityName)
-        {
-            if (cityName != string.Empty)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
+    public class WeatherValidator : Validator<WeatherResponse>
 
-            }
-        }
+    {
     }
 }
