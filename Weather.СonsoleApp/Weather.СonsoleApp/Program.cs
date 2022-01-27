@@ -17,14 +17,21 @@ namespace Weather.СonsoleApp
                 try
                 {
                     Console.WriteLine("Enter the name of the city");
+                    var cityName = Console.ReadLine();
 
-                    var weather = await weatherServices.GetWeatherAsync(key);
-
-                    Console.WriteLine("В {0}: {1} °C {2} ", weather.Name, weather.Main.Temp, weather.Main.Description);
+                    var weather = await weatherServices.GetWeatherAsync(cityName);
+                    if (weather.ErrorMessage != string.Empty)
+                    {
+                        Console.WriteLine(weather.ErrorMessage);
+                    }
+                    else
+                    {
+                        Console.WriteLine("В {0}: {1} °C {2} ", weather.Name, weather.Main.Temp, weather.Main.Description);
+                    }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    Console.WriteLine("City not found\n" + ex.Message);
+                    Console.WriteLine("City not found\n");
                 }
             }
         }

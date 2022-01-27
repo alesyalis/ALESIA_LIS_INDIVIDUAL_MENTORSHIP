@@ -3,8 +3,8 @@ using Weather.DataAccess.Models;
 
 namespace Weather.DataAccess.Repositories.Abstrdact
 {
-    public interface IWeatherRepositoty
+    public interface IWeatherRepository
     {
-        Task<WeatherResponse> GetWeatherAsync(string cityName, string key);
+        Task<WeatherResponse> GetWeatherAsync(string cityName);
     }
 }

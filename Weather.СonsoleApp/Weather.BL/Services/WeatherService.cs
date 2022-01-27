@@ -12,22 +12,23 @@ namespace Weather.BL.Services
     {
         private WeatherRepository _weatherRepositoty;
         private WeatherValidator _weatherValidator;
-        public async Task<WeatherResponseDTO> GetWeatherAsync(string key)
+        public async Task<WeatherResponseDTO> GetWeatherAsync(string cityName)
         {
             _weatherValidator = new WeatherValidator(); 
-            var cityName = Console.ReadLine();
-            _weatherValidator.IsValidCityName(cityName);    
+            
+
             if (_weatherValidator.IsValidCityName(cityName))
             {
                 _weatherRepositoty = new WeatherRepository();
 
-                var weather = await _weatherRepositoty.GetWeatherAsync(cityName, key);
+                var weather = await _weatherRepositoty.GetWeatherAsync(cityName);
                 return MappWeather(weather);
             }
             else
             {
-                Console.WriteLine("Entering the city is required");
-                return await GetWeatherAsync(key);
+               return new WeatherResponseDTO{
+                   ErrorMessage = "Entering the city is required"
+               };
             }
         }
         private WeatherResponseDTO MappWeather(WeatherResponse weatherResponse)
