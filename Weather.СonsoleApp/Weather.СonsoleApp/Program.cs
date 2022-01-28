@@ -38,6 +38,10 @@ namespace Weather.СonsoleApp
                    var weather = await _weatherService.GetWeatherAsync(cityName);
                    Console.WriteLine("В {0}: {1} °C {2} ", weather.Name, weather.Main.Temp, weather.Main.Description);
                 }
+                catch (ArgumentNullException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
                 catch (Exception)
                 {
                     Console.WriteLine("City not found\n");

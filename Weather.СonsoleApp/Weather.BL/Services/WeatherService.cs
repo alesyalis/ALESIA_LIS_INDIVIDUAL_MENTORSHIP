@@ -10,16 +10,17 @@ namespace Weather.BL.Services
     public class WeatherService : IWeatherService
     {
         private readonly IWeatherRepository _weatherRepository;
-        private readonly IValidator<WeatherResponse> _validator;
-        public WeatherService(IWeatherRepository weatherRepository, IValidator<WeatherResponse> validator)
+        private readonly IValidator _validator;
+        public WeatherService(IWeatherRepository weatherRepository, IValidator validator)
         {
             _weatherRepository = weatherRepository;
             _validator = validator; 
         }
         public async Task<WeatherResponseDTO> GetWeatherAsync(string cityName)
         {
+            _validator.ValidateCityByNameName(cityName);
             var weather = await _weatherRepository.GetWeatherAsync(cityName);
-            _validator.ValidateCityName(weather);
+            
             return MapWeather(weather);
         }
         private WeatherResponseDTO MapWeather(WeatherResponse weatherResponse)

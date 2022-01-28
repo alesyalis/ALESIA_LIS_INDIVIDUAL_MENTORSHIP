@@ -2,13 +2,13 @@
 
 namespace Weather.BL.Validators.Abstract
 {
-    public class Validator<T> : IValidator<T> where T : class
+    public class Validator: IValidator
     {
-        public void ValidateCityName(T value)
+        public void ValidateCityByNameName(string name)
         {
-            if (value == null)
+            if (name == string.Empty)
             {
-                throw new ArgumentNullException(nameof(value), "Entering the city is required");   
+                throw new ArgumentNullException("Entering the city is required\n");
             }
         }
     }

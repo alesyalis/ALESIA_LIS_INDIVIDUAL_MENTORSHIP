@@ -1,7 +1,7 @@
 ﻿namespace Weather.BL.Validators.Abstract
 {
-    public interface IValidator<T> where T : class
+    public interface IValidator
     {
-        void ValidateCityName(T value);
+        void ValidateCityByNameName(string value);
     }
 }
