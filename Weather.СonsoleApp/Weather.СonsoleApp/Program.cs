@@ -23,6 +23,7 @@ namespace Weather.СonsoleApp
             var kernel = new StandardKernel(serviceModule);
             kernel.Load(Assembly.GetExecutingAssembly());
             DependencyResolver.SetResolver(new NinjectDependencyResolver(kernel));
+
             _weatherService = kernel.Get<IWeatherService>();
 
             while (true)

@@ -33,6 +33,7 @@ namespace Weather.BL.Services
             {
                 throw new ArgumentNullException(nameof(weatherResponse), "There is no such city");
             }
+
             var weatherDTO = new WeatherResponseDTO
             {
                 Name = weatherResponse.Name,
