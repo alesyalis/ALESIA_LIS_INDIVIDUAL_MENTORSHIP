@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Weather.BL.DTOs;
 using Weather.BL.Services.Abstract;
 using Weather.BL.Validators.Abstract;
@@ -11,6 +12,7 @@ namespace Weather.BL.Services
     {
         private readonly IWeatherRepository _weatherRepository;
         private readonly IValidator _validator;
+
         public WeatherService(IWeatherRepository weatherRepository, IValidator validator)
         {
             _weatherRepository = weatherRepository;
@@ -19,24 +21,32 @@ namespace Weather.BL.Services
         public async Task<WeatherResponseDTO> GetWeatherAsync(string cityName)
         {
             _validator.ValidateCityByNameName(cityName);
+
             var weather = await _weatherRepository.GetWeatherAsync(cityName);
             
-            return MapWeather(weather);
+            return MapToWeatherResponseDTO(weather);
         }
-        private WeatherResponseDTO MapWeather(WeatherResponse weatherResponse)
+
+        private WeatherResponseDTO MapToWeatherResponseDTO(WeatherResponse weatherResponse)
         {
-            var weatherDTO = new WeatherResponseDTO 
-            { 
+            if (weatherResponse == null)
+            {
+                throw new ArgumentNullException(nameof(weatherResponse), "There is no such city");
+            }
+            var weatherDTO = new WeatherResponseDTO
+            {
                 Name = weatherResponse.Name,
-                Main = new TemperatureInfoDTO 
-                { 
+                Main = new TemperatureInfoDTO
+                {
                     Temp = weatherResponse.Main.Temp,
                     Description = DescribeTheWeather(weatherResponse.Main.Temp)
                 },
             };
 
-            return weatherDTO;  
+            return weatherDTO;
+
         }
+
        private string DescribeTheWeather(double temp)
         {
             if (temp < 0)
@@ -45,10 +55,9 @@ namespace Weather.BL.Services
                 return "It's fresh.";
             if (temp > 20 && temp <= 30)
                 return "Good weather!";
-            if (temp > 30)
+            else 
                 return "It's time to go to the beach";
-            else
-                return "Nothing";
+           
         }
     }
 }

@@ -11,8 +11,8 @@ namespace Weather.DataAccess.Repositories
 
     {
         private readonly HttpClient _httpClient;
-        private IConfiguration _configuration;
-        public WeatherRepository(IConfiguration configuration)
+        private IConfig _configuration;
+        public WeatherRepository(IConfig configuration)
         {
             _httpClient = new HttpClient();
             _configuration = configuration; 
@@ -21,8 +21,9 @@ namespace Weather.DataAccess.Repositories
         {
             var api = _configuration.Api;
             var key = _configuration.ApiKey;
-            var responce = await _httpClient.GetStringAsync($"{api}={cityName}&units=metric&appid={key}");
-            var weatherResponse = JsonConvert.DeserializeObject<WeatherResponse>(responce);
+            var responce = await _httpClient.GetAsync($"{api}={cityName}&units=metric&appid={key}");
+            var responceBody = await responce.Content.ReadAsStringAsync();  
+            var weatherResponse = JsonConvert.DeserializeObject<WeatherResponse>(responceBody);
             return weatherResponse;
         }
     }

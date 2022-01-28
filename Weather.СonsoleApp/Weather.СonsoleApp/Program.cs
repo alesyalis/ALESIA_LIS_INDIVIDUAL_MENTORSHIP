@@ -9,13 +9,13 @@ using Ninject.Web.Mvc;
 using Weather.BL.Services.Abstract;
 using AppConfiguration.AppConfig;
 using System.Configuration;
+using Weather.BL.Exceptions;
 
 namespace Weather.СonsoleApp
 {
     public class Program 
     {
         private static IWeatherService _weatherService;
-        private static IConfiguration _configuration;
         static async Task Main(string[] args)
         {
             NinjectModule serviceModule = new RegistrationModule();
@@ -24,10 +24,6 @@ namespace Weather.СonsoleApp
             kernel.Load(Assembly.GetExecutingAssembly());
             DependencyResolver.SetResolver(new NinjectDependencyResolver(kernel));
             _weatherService = kernel.Get<IWeatherService>();
-            _configuration = kernel.Get<IConfiguration>();
-            
-            _configuration.Api = ConfigurationManager.AppSettings["api"];
-            _configuration.ApiKey = ConfigurationManager.AppSettings["apiKey"];    
 
             while (true)
             {
@@ -39,6 +35,10 @@ namespace Weather.СonsoleApp
                    Console.WriteLine("В {0}: {1} °C {2} ", weather.Name, weather.Main.Temp, weather.Main.Description);
                 }
                 catch (ArgumentNullException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                catch (ValidationException ex)
                 {
                     Console.WriteLine(ex.Message);
                 }

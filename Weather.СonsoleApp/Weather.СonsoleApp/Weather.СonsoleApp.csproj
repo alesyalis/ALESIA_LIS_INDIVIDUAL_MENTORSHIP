@@ -114,10 +114,6 @@
       <Project>{85d5abb5-cbdf-44cf-bb3f-86754d4b7e7c}</Project>
       <Name>Weather.BL</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Weather.DataAccess\Weather.DataAccess.csproj">
-      <Project>{0A119D86-A788-4C2D-934F-89983072643A}</Project>
-      <Name>Weather.DataAccess</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Weather.BL.Exceptions;
 
 namespace Weather.BL.Validators.Abstract
 {
@@ -6,9 +6,9 @@ namespace Weather.BL.Validators.Abstract
     {
         public void ValidateCityByNameName(string name)
         {
-            if (name == string.Empty)
+            if (string.IsNullOrWhiteSpace(name))
             {
-                throw new ArgumentNullException("Entering the city is required\n");
+                throw new ValidationException("Entering the city is required\n");
             }
         }
     }
