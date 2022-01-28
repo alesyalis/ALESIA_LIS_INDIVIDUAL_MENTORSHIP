@@ -2,6 +2,6 @@
 {
     public interface IValidator
     {
-        void ValidateCityByNameName(string value);
+        void ValidateCityByName(string value);
     }
 }

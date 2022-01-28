@@ -4,7 +4,7 @@ namespace Weather.BL.Validators.Abstract
 {
     public class Validator: IValidator
     {
-        public void ValidateCityByNameName(string name)
+        public void ValidateCityByName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
             {

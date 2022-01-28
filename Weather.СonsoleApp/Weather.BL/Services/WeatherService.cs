@@ -20,7 +20,7 @@ namespace Weather.BL.Services
         }
         public async Task<WeatherResponseDTO> GetWeatherAsync(string cityName)
         {
-            _validator.ValidateCityByNameName(cityName);
+            _validator.ValidateCityByName(cityName);
 
             var weather = await _weatherRepository.GetWeatherAsync(cityName);
             
@@ -40,7 +40,7 @@ namespace Weather.BL.Services
                 Main = new TemperatureInfoDTO
                 {
                     Temp = weatherResponse.Main.Temp,
-                    Description = DescribeTheWeather(weatherResponse.Main.Temp)
+                    Description = GetWeatherDescription(weatherResponse.Main.Temp)
                 },
             };
 
@@ -48,7 +48,7 @@ namespace Weather.BL.Services
 
         }
 
-       private string DescribeTheWeather(double temp)
+       private string GetWeatherDescription(double temp)
         {
             if (temp < 0)
                 return "Dress warmly.";
