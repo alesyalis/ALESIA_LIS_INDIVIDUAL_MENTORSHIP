@@ -2,7 +2,7 @@
 {
     public interface IConfig
     {
-        string Api { get;  }
+        string Url { get;  }
 
         string ApiKey { get;  }
     }
