@@ -3,6 +3,7 @@ using Weather.DataAccess.Repositories.Abstrdact;
 using Newtonsoft.Json;
 using Weather.DataAccess.Models;
 using System.Net.Http;
+using AppConfiguration.AppConfig;
 
 namespace Weather.DataAccess.Repositories
 {
@@ -10,13 +11,17 @@ namespace Weather.DataAccess.Repositories
 
     {
         private readonly HttpClient _httpClient;
-        public WeatherRepository()
+        private IConfiguration _configuration;
+        public WeatherRepository(IConfiguration configuration)
         {
             _httpClient = new HttpClient();
+            _configuration = configuration; 
         }
         public async Task<WeatherResponse> GetWeatherAsync(string cityName)
         {
-            var responce = await _httpClient.GetStringAsync($"https://api.openweathermap.org/data/2.5/weather?q={cityName}&units=metric&appid=8e943ed8b016561c73b8a1920366ef79");
+            var api = _configuration.Api;
+            var key = _configuration.ApiKey;
+            var responce = await _httpClient.GetStringAsync($"{api}={cityName}&units=metric&appid={key}");
             var weatherResponse = JsonConvert.DeserializeObject<WeatherResponse>(responce);
             return weatherResponse;
         }

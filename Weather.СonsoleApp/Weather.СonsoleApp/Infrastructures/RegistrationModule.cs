@@ -1,11 +1,8 @@
-﻿using Ninject.Modules;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AppConfiguration.AppConfig;
+using Ninject.Modules;
 using Weather.BL.Services;
 using Weather.BL.Services.Abstract;
+using Configuration = AppConfiguration.AppConfig.Configuration;
 
 namespace Weather.СonsoleApp.Infrastructures
 {
@@ -13,7 +10,8 @@ namespace Weather.СonsoleApp.Infrastructures
     {
         public override void Load()
         {
-            Bind<IWeatherService>().To<WeatherServicese>();
+            Bind<IWeatherService>().To<WeatherService>();
+            Bind<IConfiguration>().To<Configuration>().InSingletonScope();
         }
     }
 }

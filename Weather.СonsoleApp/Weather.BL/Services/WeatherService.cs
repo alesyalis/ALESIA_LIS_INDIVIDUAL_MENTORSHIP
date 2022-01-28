@@ -1,29 +1,28 @@
 ﻿using System.Threading.Tasks;
 using Weather.BL.DTOs;
 using Weather.BL.Services.Abstract;
-using Weather.BL.Validators;
+using Weather.BL.Validators.Abstract;
 using Weather.DataAccess.Models;
 using Weather.DataAccess.Repositories.Abstrdact;
 
 namespace Weather.BL.Services
 {
-    public class WeatherServicese : IWeatherService
+    public class WeatherService : IWeatherService
     {
         private readonly IWeatherRepository _weatherRepository;
-        private WeatherValidator _weatherValidator;
-        public WeatherServicese(IWeatherRepository weatherRepository)
+        private readonly IValidator<WeatherResponse> _validator;
+        public WeatherService(IWeatherRepository weatherRepository, IValidator<WeatherResponse> validator)
         {
             _weatherRepository = weatherRepository;
+            _validator = validator; 
         }
         public async Task<WeatherResponseDTO> GetWeatherAsync(string cityName)
         {
-            _weatherValidator = new WeatherValidator();
-
             var weather = await _weatherRepository.GetWeatherAsync(cityName);
-            _weatherValidator.ValidateCityName(weather);
-            return MappWeather(weather);
+            _validator.ValidateCityName(weather);
+            return MapWeather(weather);
         }
-        private WeatherResponseDTO MappWeather(WeatherResponse weatherResponse)
+        private WeatherResponseDTO MapWeather(WeatherResponse weatherResponse)
         {
             var weatherDTO = new WeatherResponseDTO 
             { 
@@ -31,13 +30,13 @@ namespace Weather.BL.Services
                 Main = new TemperatureInfoDTO 
                 { 
                     Temp = weatherResponse.Main.Temp,
-                    Description = WeatherDescription(weatherResponse.Main.Temp)
+                    Description = DescribeTheWeather(weatherResponse.Main.Temp)
                 },
             };
 
             return weatherDTO;  
         }
-       private string WeatherDescription(double temp)
+       private string DescribeTheWeather(double temp)
         {
             if (temp < 0)
                 return "Dress warmly.";

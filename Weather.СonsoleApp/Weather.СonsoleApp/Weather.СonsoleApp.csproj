@@ -106,6 +106,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AppConfiguration\AppConfiguration.csproj">
+      <Project>{8e5aad0e-f472-436b-b926-d55b9d7d50cf}</Project>
+      <Name>AppConfiguration</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Weather.BL\Weather.BL.csproj">
       <Project>{85d5abb5-cbdf-44cf-bb3f-86754d4b7e7c}</Project>
       <Name>Weather.BL</Name>

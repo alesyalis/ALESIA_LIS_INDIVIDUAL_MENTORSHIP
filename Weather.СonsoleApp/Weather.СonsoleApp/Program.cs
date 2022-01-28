@@ -1,5 +1,4 @@
 ﻿using System;
-using Weather.BL.Services;
 using System.Threading.Tasks;
 using Ninject.Modules;
 using Weather.BL.Infrastructures;
@@ -8,12 +7,15 @@ using System.Reflection;
 using System.Web.Mvc;
 using Ninject.Web.Mvc;
 using Weather.BL.Services.Abstract;
+using AppConfiguration.AppConfig;
+using System.Configuration;
 
 namespace Weather.СonsoleApp
 {
     public class Program 
     {
         private static IWeatherService _weatherService;
+        private static IConfiguration _configuration;
         static async Task Main(string[] args)
         {
             NinjectModule serviceModule = new RegistrationModule();
@@ -22,8 +24,10 @@ namespace Weather.СonsoleApp
             kernel.Load(Assembly.GetExecutingAssembly());
             DependencyResolver.SetResolver(new NinjectDependencyResolver(kernel));
             _weatherService = kernel.Get<IWeatherService>();
-
-            var key = System.Configuration.ConfigurationManager.AppSettings["apiKey"];
+            _configuration = kernel.Get<IConfiguration>();
+            
+            _configuration.Api = ConfigurationManager.AppSettings["api"];
+            _configuration.ApiKey = ConfigurationManager.AppSettings["apiKey"];    
 
             while (true)
             {
@@ -33,10 +37,6 @@ namespace Weather.СonsoleApp
                    var cityName = Console.ReadLine();
                    var weather = await _weatherService.GetWeatherAsync(cityName);
                    Console.WriteLine("В {0}: {1} °C {2} ", weather.Name, weather.Main.Temp, weather.Main.Description);
-                }
-                catch (ArgumentNullException)
-                {
-                    Console.WriteLine("!!!!!");
                 }
                 catch (Exception)
                 {
