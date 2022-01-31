@@ -19,7 +19,7 @@ namespace Weather.Tests.Service
         public void Setup()
         {
             _weatherRepositoryMock = new Mock<IWeatherRepository>();
-            _validatorMock = new Mock<IValidator>();    
+            _validatorMock = new Mock<IValidator>();
 
             _weatherService = new WeatherService(
                 _weatherRepositoryMock.Object,
@@ -27,27 +27,29 @@ namespace Weather.Tests.Service
         }
 
         [Test]
-        public async Task GetWeatherAsync_Sucess()
+        public async Task GetWeatherAsync_IfCorrectCityName_Sucess()
         {
+            // Arrange
             var weater = new WeatherResponse()
             {
                 Name = "Minsk",
-                Main = new TemperatureInfo() { Temp = 5,}
+                Main = new TemperatureInfo() { Temp = 5, }
 
             };
+            // Act
             var name = "Minsk";
-            _validatorMock.Verify(x => x.ValidateCityByName(name), Times.Never());   
+            _validatorMock.Verify(x => x.ValidateCityByName(name), Times.Never());
             _weatherRepositoryMock.Setup(x => x.GetWeatherAsync(name)).ReturnsAsync(weater);
 
             var result = await _weatherService.GetWeatherAsync(name);
             var dto = new WeatherResponseDTO()
             {
-               Name = "Minsk",
-               Main = new TemperatureInfoDTO() { Temp = 5, }
+                Name = "Minsk",
+                Main = new TemperatureInfoDTO() { Temp = 5, }
             };
 
+            // Assert
             Assert.AreEqual(dto.Main.Temp, result.Main.Temp);
-
         }
     }
 }
