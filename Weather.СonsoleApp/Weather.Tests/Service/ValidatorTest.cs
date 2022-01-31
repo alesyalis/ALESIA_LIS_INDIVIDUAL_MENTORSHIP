@@ -9,10 +9,12 @@ namespace Weather.Tests.Service
         [Test]
         public void ValidateCityByName_IfStringEmpty_ValidationIsFaild()
         {
+            // Act
             var name = "";
             var sut = new Validator();
 
-            NUnit.Framework.Assert.Throws<ValidationException>(() => sut.ValidateCityByName(name));
+            // Assert
+            Assert.Throws<ValidationException>(() => sut.ValidateCityByName(name));
         }
     }
 }
