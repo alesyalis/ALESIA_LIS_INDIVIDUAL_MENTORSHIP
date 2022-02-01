@@ -6,9 +6,10 @@ namespace Weather.Tests.Service
 {
     public class ValidatorTest
     {
-        private readonly IValidator _validator;
+        private IValidator _validator;
 
-        public ValidatorTest()
+        [SetUp]
+        public void Setup()
         {
             _validator = new Validator();
         }
@@ -20,7 +21,7 @@ namespace Weather.Tests.Service
         {
             // Arrange
 
-            //Act
+            // Act
 
             // Assert
             Assert.Throws<ValidationException>(() => _validator.ValidateCityByName(name));

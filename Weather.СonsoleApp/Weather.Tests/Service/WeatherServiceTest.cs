@@ -1,5 +1,6 @@
 ﻿using Moq;
 using NUnit.Framework;
+using System;
 using System.Threading.Tasks;
 using Weather.BL.DTOs;
 using Weather.BL.Services;
@@ -44,12 +45,26 @@ namespace Weather.Tests.Service
             var result = await _weatherService.GetWeatherAsync(name);
             var dto = new WeatherResponseDTO()
             {
-                Name = "Minsk",
-                Main = new TemperatureInfoDTO() { Temp = 5, }
+                Name = weater.Name,
+                Main = new TemperatureInfoDTO() { Temp = weater.Main.Temp, }
             };
 
             // Assert
             Assert.AreEqual(dto.Main.Temp, result.Main.Temp);
+            Assert.AreEqual(dto.Name, result.Name);
+        }
+
+        [Test]
+        public async Task GetWeatherAsync_IfUnCorrectCityName_ShouldReturnNothing()
+        {
+            // Arrange
+            var name = "fuf";
+
+            // Act
+            _weatherRepositoryMock.Setup(x => x.GetWeatherAsync(name)).ReturnsAsync(() => null);
+
+            // Assert
+            Assert.ThrowsAsync<ArgumentNullException>(async () => await _weatherService.GetWeatherAsync(name));
         }
     }
 }
