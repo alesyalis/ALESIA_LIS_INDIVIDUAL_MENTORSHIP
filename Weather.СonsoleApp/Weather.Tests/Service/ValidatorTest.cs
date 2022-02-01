@@ -26,5 +26,17 @@ namespace Weather.Tests.Service
             // Assert
             Assert.Throws<ValidationException>(() => _validator.ValidateCityByName(name));
         }
+        [Test]
+        public void ValidateCityByName_IfStringEmpty_ValidationIsFaild()
+        {
+            // Arrange
+            var name = string.Empty;    
+
+            // Act
+            _validator.ValidateCityByName(name);
+
+            // Assert
+            Assert.Throws<ValidationException>(() => _validator.ValidateCityByName(name));
+        }
     }
 }
