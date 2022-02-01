@@ -6,15 +6,24 @@ namespace Weather.Tests.Service
 {
     public class ValidatorTest
     {
-        [Test]
-        public void ValidateCityByName_IfStringEmpty_ValidationIsFaild()
+        private readonly IValidator _validator;
+
+        public ValidatorTest()
         {
-            // Act
-            var name = "";
-            var sut = new Validator();
+            _validator = new Validator();
+        }
+
+        [TestCase("")]
+        [TestCase(null)]
+        [Test]
+        public void ValidateCityByName_IfStringEmpty_ValidationIsFaild(string name)
+        {
+            // Arrange
+
+            //Act
 
             // Assert
-            Assert.Throws<ValidationException>(() => sut.ValidateCityByName(name));
+            Assert.Throws<ValidationException>(() => _validator.ValidateCityByName(name));
         }
     }
 }
