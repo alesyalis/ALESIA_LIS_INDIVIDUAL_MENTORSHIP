@@ -28,17 +28,17 @@ namespace Weather.BL.Services
             {
                 return new WeatherResponseNew() { IsError = true, Message = $"{cityName} not found" };
             }
-            var desc = GetWeatherDescription(weather);
+            var description = GetWeatherDescription(weather);
             
-            return MapToWeatherResponseDTO(weather, desc);
+            return MapToWeatherResponseDTO(weather, description);
 
         }
-        private WeatherResponseNew MapToWeatherResponseDTO(WeatherResponse weatherResponse, string desc)
+        private WeatherResponseNew MapToWeatherResponseDTO(WeatherResponse weatherResponse, string description)
         {
             var weatherDTO = new WeatherResponseNew
             {
                 IsError = false,
-                Message = $"В {weatherResponse.Name}: {weatherResponse.Main.Temp} °C {desc} "
+                Message = $"В {weatherResponse.Name}: {weatherResponse.Main.Temp} °C {description} "
             };
             return weatherDTO;
         }

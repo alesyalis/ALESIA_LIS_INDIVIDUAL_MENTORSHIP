@@ -16,7 +16,6 @@ namespace Weather.Tests.Service
 
         [TestCase("")]
         [TestCase(null)]
-        [Test]
         public void ValidateCityByName_IfStringEmpty_ValidationIsFaild(string name)
         {
             // Arrange
@@ -33,10 +32,10 @@ namespace Weather.Tests.Service
             var name = string.Empty;    
 
             // Act
-            _validator.ValidateCityByName(name);
+            void result () => _validator.ValidateCityByName(name);
 
             // Assert
-            Assert.Throws<ValidationException>(() => _validator.ValidateCityByName(name));
+            Assert.Throws<ValidationException>(result);
         }
     }
 }
