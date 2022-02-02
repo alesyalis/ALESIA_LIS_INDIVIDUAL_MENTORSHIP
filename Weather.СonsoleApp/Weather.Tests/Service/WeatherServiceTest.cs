@@ -26,7 +26,7 @@ namespace Weather.Tests.Service
         }
 
         [Test]
-        public async Task GetWeatherAsync_IfDescriptionDressWarmly_Sucess()
+        public async Task GetWeatherAsync_IfTemperatureMinus_ReturnDescription()
         {
             // Arrange
             var weather = new WeatherResponse()
@@ -35,7 +35,7 @@ namespace Weather.Tests.Service
                 Main = new TemperatureInfo() { Temp = -1, Description = "Dress warmly." }
             };
             var name = "Minsk";
-            var message = $"В {weather.Name}: {weather.Main.Temp} °C {weather.Main.Description} ";
+            var message = $"In {weather.Name}: {weather.Main.Temp} °C {weather.Main.Description} ";
             
             _validatorMock.Verify(x => x.ValidateCityByName(name), Times.Never());
             _weatherRepositoryMock.Setup(x => x.GetWeatherAsync(name)).ReturnsAsync(weather);
@@ -48,16 +48,16 @@ namespace Weather.Tests.Service
         }
 
         [Test]
-        public async Task GetWeatherAsync_IfDescriptionGoodWeather_Sucess()
+        public async Task GetWeatherAsync_IfTemperatureMore20AndLess30_ReturnDescription()
         {
             // Arrange
             var weather = new WeatherResponse()
             {
-                Name = "London",
+                Name = "Kenya",
                 Main = new TemperatureInfo() { Temp = 30, Description = "Good weather!" }
             };
-            var name = "London";
-            var message = $"В {weather.Name}: {weather.Main.Temp} °C {weather.Main.Description} ";
+            var name = "Kenya";
+            var message = $"In {weather.Name}: {weather.Main.Temp} °C {weather.Main.Description} ";
             _validatorMock.Verify(x => x.ValidateCityByName(name), Times.Never());
             _weatherRepositoryMock.Setup(x => x.GetWeatherAsync(name)).ReturnsAsync(weather);
 
@@ -69,7 +69,7 @@ namespace Weather.Tests.Service
         }
 
         [Test]
-        public async Task GetWeatherAsync_IfTemperature10_Sucess()
+        public async Task GetWeatherAsync_IfTemperatureMore0AddLess20_ReturnDescription()
         {
             // Arrange
             var weather = new WeatherResponse()
@@ -78,7 +78,7 @@ namespace Weather.Tests.Service
                 Main = new TemperatureInfo() { Temp = 10, Description = "It's fresh." }
             };
             var name = "Minsk";
-            var message = $"В {weather.Name}: {weather.Main.Temp} °C {weather.Main.Description} ";
+            var message = $"In {weather.Name}: {weather.Main.Temp} °C {weather.Main.Description} ";
 
             _validatorMock.Verify(x => x.ValidateCityByName(name), Times.Never());
             _weatherRepositoryMock.Setup(x => x.GetWeatherAsync(name)).ReturnsAsync(weather);
@@ -91,16 +91,16 @@ namespace Weather.Tests.Service
         }
 
         [Test]
-        public async Task GetWeatherAsync_IfTemperatureMore30_Sucess()
+        public async Task GetWeatherAsync_IfTemperatureMore30_ReturnDescription()
         {
             // Arrange
             var weather = new WeatherResponse()
             {
-                Name = "Minsk",
+                Name = "Gambia",
                 Main = new TemperatureInfo() { Temp = 35, Description = "It's time to go to the beach" }
             };
-            var name = "Minsk";
-            var message = $"В {weather.Name}: {weather.Main.Temp} °C {weather.Main.Description} ";
+            var name = "Гамбия";
+            var message = $"In {weather.Name}: {weather.Main.Temp} °C {weather.Main.Description} ";
 
             _validatorMock.Verify(x => x.ValidateCityByName(name), Times.Never());
             _weatherRepositoryMock.Setup(x => x.GetWeatherAsync(name)).ReturnsAsync(weather);
@@ -113,7 +113,7 @@ namespace Weather.Tests.Service
         }
 
         [Test]
-        public async Task GetWeatherAsync_IfUnCorrectCityName_ShouldReturnNothing()
+        public async Task GetWeatherAsync_IfIsNotCorrectCityName_ShouldReturnNotFound()
         {
             // Arrange
             var weather = new WeatherResponse()
@@ -129,6 +129,42 @@ namespace Weather.Tests.Service
 
             // Assert
             Assert.AreEqual(message, result.Message);
+        }
+        [Test]
+        public async Task GetWeatherAsync_IfFladIsErrorIsTrue_Success()
+        {
+            // Arrange
+            var weather = new WeatherResponse()
+            {
+                Name = "",
+            };
+            var name = "fuf";
+            _weatherRepositoryMock.Setup(x => x.GetWeatherAsync(name)).ReturnsAsync(() => weather);
+
+            // Act
+            var result = await _weatherService.GetWeatherAsync(name);
+
+            // Assert
+            Assert.IsTrue(result.IsError);
+        }
+
+        [Test]
+        public async Task GetWeatherAsync_IfFladIsErrorIsFalse_Success()
+        {
+            // Arrange
+            var weather = new WeatherResponse()
+            {
+                Name = "Minsk",
+                Main = new TemperatureInfo() { Temp = 35, Description = "It's time to go to the beach" }
+            };
+            var name = "Minsk";
+            _weatherRepositoryMock.Setup(x => x.GetWeatherAsync(name)).ReturnsAsync(() => weather);
+
+            // Act
+            var result = await _weatherService.GetWeatherAsync(name);
+
+            // Assert
+            Assert.IsFalse(result.IsError);
         }
     }
 }
