@@ -1,9 +1,8 @@
 ﻿namespace Weather.BL.DTOs
 {
-    public class WeatherResponseDTO
+    public class WeatherResponseNew
     {
-        public TemperatureInfoDTO Main { get; set; }
-
-        public string Name { get; set; }
+        public bool IsError { get; set; }
+        public string Message { get; set; }
     }
 }

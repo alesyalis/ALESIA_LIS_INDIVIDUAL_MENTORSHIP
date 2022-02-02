@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Weather.BL.DTOs;
 using Weather.BL.Services.Abstract;
 using Weather.BL.Validators.Abstract;
@@ -18,47 +17,42 @@ namespace Weather.BL.Services
             _weatherRepository = weatherRepository;
             _validator = validator; 
         }
-        public async Task<WeatherResponseDTO> GetWeatherAsync(string cityName)
+      
+        public async Task<WeatherResponseNew> GetWeatherAsync(string cityName)
         {
             _validator.ValidateCityByName(cityName);
 
             var weather = await _weatherRepository.GetWeatherAsync(cityName);
-            
-            return MapToWeatherResponseDTO(weather);
-        }
-
-        private WeatherResponseDTO MapToWeatherResponseDTO(WeatherResponse weatherResponse)
-        {
-            if (weatherResponse == null)
+          
+            if (weather.Main == null)
             {
-                throw new ArgumentNullException(nameof(weatherResponse), "There is no such city");
+                return new WeatherResponseNew() { IsError = true, Message = $"{cityName} not found" };
             }
-
-            var weatherDTO = new WeatherResponseDTO
-            {
-                Name = weatherResponse.Name,
-                Main = new TemperatureInfoDTO
-                {
-                    Temp = weatherResponse.Main.Temp,
-                    Description = GetWeatherDescription(weatherResponse.Main.Temp)
-                },
-            };
-
-            return weatherDTO;
+            var desc = GetWeatherDescription(weather);
+            
+            return MapToWeatherResponseDTO(weather, desc);
 
         }
-
-       private string GetWeatherDescription(double temp)
+        private WeatherResponseNew MapToWeatherResponseDTO(WeatherResponse weatherResponse, string desc)
         {
-            if (temp < 0)
-                return "Dress warmly.";
-            if (temp >= 0 && temp <= 20)
-                return "It's fresh.";
-            if (temp > 20 && temp <= 30)
-                return "Good weather!";
+            var weatherDTO = new WeatherResponseNew
+            {
+                IsError = false,
+                Message = $"В {weatherResponse.Name}: {weatherResponse.Main.Temp} °C {desc} "
+            };
+            return weatherDTO;
+        }
+
+        private string GetWeatherDescription(WeatherResponse weatherResponse)
+        {
+            if (weatherResponse.Main.Temp < 0)
+                return weatherResponse.Main.Description = "Dress warmly.";
+            if (weatherResponse.Main.Temp >= 0 && weatherResponse.Main.Temp <= 20)
+                return weatherResponse.Main.Description = "It's fresh.";
+            if (weatherResponse.Main.Temp > 20 && weatherResponse.Main.Temp <= 30)
+                return weatherResponse.Main.Description = "Good weather!";
             else 
-                return "It's time to go to the beach";
-           
+                return weatherResponse.Main.Description = "It's time to go to the beach";
         }
     }
 }
