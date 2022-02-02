@@ -128,7 +128,6 @@ namespace Weather.Tests.Service
             var result = await _weatherService.GetWeatherAsync(name);
 
             // Assert
-             //Assert.ThrowsAsync<ArgumentNullException>(async () => await _weatherService.GetWeatherAsync(name));
             Assert.AreEqual(message, result.Message);
         }
     }
