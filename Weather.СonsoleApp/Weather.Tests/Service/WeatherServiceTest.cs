@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using System;
 using System.Threading.Tasks;
+using Weather.BL.Exceptions;
 using Weather.BL.Services;
 using Weather.BL.Validators.Abstract;
 using Weather.DataAccess.Models;
@@ -83,6 +84,20 @@ namespace Weather.Tests.Service
             // Assert
             var result = Assert.ThrowsAsync<Exception>( () => _weatherService.GetWeatherAsync(name));
             Assert.AreEqual(expectedExcetpion.Message, result.Message);  
+        }
+
+        [Test]
+        public void GetWeatherAsync_ReceivedValidatorError_ReceivedError()
+        {
+            // Arrange
+            var name = "";
+            var expectedExcetpion = new ValidationException();
+            _validatorMock.Setup(x => x.ValidateCityByName(name)).Throws<ValidationException>();
+
+            // Act
+            // Assert
+            var result = Assert.ThrowsAsync<ValidationException>(() => _weatherService.GetWeatherAsync(name));
+            Assert.AreEqual(expectedExcetpion.Message, result.Message);
         }
     }
 }
