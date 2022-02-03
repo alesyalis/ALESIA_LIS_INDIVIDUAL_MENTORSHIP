@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using AppConfiguration.AppConfig;
+using Moq;
 using NUnit.Framework;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -22,7 +23,7 @@ namespace Weather.Tests.Service
         {
             _weatherRepositoryMock = new Mock<IWeatherRepository>();
             _validatorMock = new Mock<IValidator>();
-
+            
             _weatherService = new WeatherService(
                 _weatherRepositoryMock.Object,
                 _validatorMock.Object);
@@ -71,6 +72,20 @@ namespace Weather.Tests.Service
             Assert.IsNotNull(result);
             Assert.AreEqual(message, result.Message);
             Assert.IsTrue(result.IsError);
+        }
+
+        [TestCase("")]
+        public async Task GetWeatherAsync_ReceivedRepositoryError_ReceivedError(string name)
+        {
+            // Arrange
+            var expectedExcetpion = new Exception();
+            _weatherRepositoryMock.Setup(x => x.GetWeatherAsync(name)).ReturnsAsync(() => throw  new Exception());
+
+            // Act
+
+            // Assert
+            var result = Assert.ThrowsAsync<Exception>( () => _weatherService.GetWeatherAsync(name));
+            Assert.AreEqual(expectedExcetpion.Message, result.Message);  
         }
     }
 }

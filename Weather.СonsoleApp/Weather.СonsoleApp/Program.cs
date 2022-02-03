@@ -64,7 +64,7 @@ namespace Weather.СonsoleApp
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Unhandled exeption :" + ex.Message);
+                Console.WriteLine("Unhand exeption :" + ex.Message);
             }
         }
     }
