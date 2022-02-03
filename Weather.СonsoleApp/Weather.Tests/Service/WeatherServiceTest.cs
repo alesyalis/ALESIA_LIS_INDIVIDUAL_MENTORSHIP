@@ -72,7 +72,7 @@ namespace Weather.Tests.Service
         }
 
         [TestCase("")]
-        public async Task GetWeatherAsync_ReceivedRepositoryError_ReceivedError(string name)
+        public  void GetWeatherAsync_ReceivedRepositoryError_ReceivedError(string name)
         {
             // Arrange
             var expectedExcetpion = new Exception();
