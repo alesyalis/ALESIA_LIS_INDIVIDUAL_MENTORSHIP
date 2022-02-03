@@ -1,9 +1,12 @@
 ﻿using Moq;
 using NUnit.Framework;
+using System;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Weather.BL.Services;
 using Weather.BL.Validators.Abstract;
 using Weather.DataAccess.Models;
+using Weather.DataAccess.Repositories;
 using Weather.DataAccess.Repositories.Abstrdact;
 
 namespace Weather.Tests.Service
@@ -25,146 +28,49 @@ namespace Weather.Tests.Service
                 _validatorMock.Object);
         }
 
-        [Test]
-        public async Task GetWeatherAsync_IfTemperatureMinus_ReturnDescription()
+        [TestCase("Minsk", -1, "Dress warmly.")]
+        [TestCase("London", 10, "It's fresh.")]
+        [TestCase("Kenya", 30, "Good weather!")]
+        [TestCase("Gambia", 35, "It's time to go to the beach")]
+        public async Task GetWeatherAsync_CorrectWeatherIsReceived_IsErrorFalseAndMessageIsGenerated(string cityName, double temp, string description)
         {
             // Arrange
             var weather = new WeatherResponse()
             {
-                Name = "Minsk",
-                Main = new TemperatureInfo() { Temp = -1, Description = "Dress warmly." }
+                Name = cityName,
+                Main = new TemperatureInfo() { Temp = temp, Description = description }
             };
-            var name = "Minsk";
-            var message = $"In {weather.Name}: {weather.Main.Temp} °C {weather.Main.Description} ";
-            
-            _validatorMock.Verify(x => x.ValidateCityByName(name), Times.Never());
-            _weatherRepositoryMock.Setup(x => x.GetWeatherAsync(name)).ReturnsAsync(weather);
-            
-            // Act
-            var result = await _weatherService.GetWeatherAsync(name);
-            
-            // Assert
-            Assert.AreEqual(message, result.Message);
-        }
-
-        [Test]
-        public async Task GetWeatherAsync_IfTemperatureMore20AndLess30_ReturnDescription()
-        {
-            // Arrange
-            var weather = new WeatherResponse()
-            {
-                Name = "Kenya",
-                Main = new TemperatureInfo() { Temp = 30, Description = "Good weather!" }
-            };
-            var name = "Kenya";
-            var message = $"In {weather.Name}: {weather.Main.Temp} °C {weather.Main.Description} ";
-            _validatorMock.Verify(x => x.ValidateCityByName(name), Times.Never());
-            _weatherRepositoryMock.Setup(x => x.GetWeatherAsync(name)).ReturnsAsync(weather);
-
-            // Act
-            var result = await _weatherService.GetWeatherAsync(name);
-
-            // Assert
-           Assert.AreEqual(message, result.Message);
-        }
-
-        [Test]
-        public async Task GetWeatherAsync_IfTemperatureMore0AddLess20_ReturnDescription()
-        {
-            // Arrange
-            var weather = new WeatherResponse()
-            {
-                Name = "Minsk",
-                Main = new TemperatureInfo() { Temp = 10, Description = "It's fresh." }
-            };
-            var name = "Minsk";
             var message = $"In {weather.Name}: {weather.Main.Temp} °C {weather.Main.Description} ";
 
-            _validatorMock.Verify(x => x.ValidateCityByName(name), Times.Never());
-            _weatherRepositoryMock.Setup(x => x.GetWeatherAsync(name)).ReturnsAsync(weather);
+            _weatherRepositoryMock.Setup(x => x.GetWeatherAsync(cityName)).ReturnsAsync(weather);
 
             // Act
-            var result = await _weatherService.GetWeatherAsync(name);
+            var result = await _weatherService.GetWeatherAsync(cityName);
 
             // Assert
+            _validatorMock.Verify(x => x.ValidateCityByName(cityName), Times.Once());
+            Assert.IsNotNull(result);
             Assert.AreEqual(message, result.Message);
-        }
-
-        [Test]
-        public async Task GetWeatherAsync_IfTemperatureMore30_ReturnDescription()
-        {
-            // Arrange
-            var weather = new WeatherResponse()
-            {
-                Name = "Gambia",
-                Main = new TemperatureInfo() { Temp = 35, Description = "It's time to go to the beach" }
-            };
-            var name = "Гамбия";
-            var message = $"In {weather.Name}: {weather.Main.Temp} °C {weather.Main.Description} ";
-
-            _validatorMock.Verify(x => x.ValidateCityByName(name), Times.Never());
-            _weatherRepositoryMock.Setup(x => x.GetWeatherAsync(name)).ReturnsAsync(weather);
-
-            // Act
-            var result = await _weatherService.GetWeatherAsync(name);
-
-            // Assert
-            Assert.AreEqual(message, result.Message);
-        }
-
-        [Test]
-        public async Task GetWeatherAsync_IfIsNotCorrectCityName_ShouldReturnNotFound()
-        {
-            // Arrange
-            var weather = new WeatherResponse()
-            {
-                Name = "",
-            };
-            var name = "fuf";
-            var message = $"{name} not found";
-
-            // Act
-            _weatherRepositoryMock.Setup(x => x.GetWeatherAsync(name)).ReturnsAsync(() => weather);
-            var result = await _weatherService.GetWeatherAsync(name);
-
-            // Assert
-            Assert.AreEqual(message, result.Message);
-        }
-        [Test]
-        public async Task GetWeatherAsync_IfFladIsErrorIsTrue_Success()
-        {
-            // Arrange
-            var weather = new WeatherResponse()
-            {
-                Name = "",
-            };
-            var name = "fuf";
-            _weatherRepositoryMock.Setup(x => x.GetWeatherAsync(name)).ReturnsAsync(() => weather);
-
-            // Act
-            var result = await _weatherService.GetWeatherAsync(name);
-
-            // Assert
-            Assert.IsTrue(result.IsError);
-        }
-
-        [Test]
-        public async Task GetWeatherAsync_IfFladIsErrorIsFalse_Success()
-        {
-            // Arrange
-            var weather = new WeatherResponse()
-            {
-                Name = "Minsk",
-                Main = new TemperatureInfo() { Temp = 35, Description = "It's time to go to the beach" }
-            };
-            var name = "Minsk";
-            _weatherRepositoryMock.Setup(x => x.GetWeatherAsync(name)).ReturnsAsync(() => weather);
-
-            // Act
-            var result = await _weatherService.GetWeatherAsync(name);
-
-            // Assert
             Assert.IsFalse(result.IsError);
+        }
+
+        [TestCase("test")]
+        [TestCase("!!!!")]
+        public async Task GetWeatherAsync_ReceivedIncorrectWeather_IsErrorTrueAndMessageIsGenerated(string name)
+        {
+            // Arrange
+            var weather = new WeatherResponse() { };
+            var message = $"{name} not found";
+            _weatherRepositoryMock.Setup(x => x.GetWeatherAsync(name)).ReturnsAsync(() => weather);
+
+            // Act
+            var result = await _weatherService.GetWeatherAsync(name);
+
+            // Assert
+            _validatorMock.Verify(x => x.ValidateCityByName(name), Times.Once());
+            Assert.IsNotNull(result);
+            Assert.AreEqual(message, result.Message);
+            Assert.IsTrue(result.IsError);
         }
     }
 }

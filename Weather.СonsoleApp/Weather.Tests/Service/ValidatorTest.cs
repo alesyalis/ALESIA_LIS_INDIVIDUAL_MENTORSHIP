@@ -17,41 +17,30 @@ namespace Weather.Tests.Service
 
         [TestCase("")]
         [TestCase(null)]
-        public void ValidateCityByName_IfStringEmpty_ValidationIsFaild(string name)
+        public void ValidateCityByName_CityNameIsEmpty_ValidationMessage(string name)
         {
             // Arrange
-
-            // Act
-
-            // Assert
-            Assert.Throws<ValidationException>(() => _validator.ValidateCityByName(name));
-        }
-        [Test]
-        public void ValidateCityByName_IfStringEmpty_ValidationIsFaild()
-        {
-            // Arrange
-            var name = string.Empty;    
-
-            // Act
-            void result () => _validator.ValidateCityByName(name);
-
-            // Assert
-            Assert.Throws<ValidationException>(result);
-        }
-
-        [Test]
-        public void ValidateCityByName_IfStringEmpty_ValidationMessage()
-        {
-            // Arrange
-            var name = string.Empty;
             var message = "Entering the city is required\n";
 
             // Act
             void result() => _validator.ValidateCityByName(name);
-            Exception ex = Assert.Throws<ValidationException>(result);
 
             // Assert
+            Exception ex = Assert.Throws<ValidationException>(result);
             Assert.AreEqual(message, ex.Message);
+        }
+
+        [TestCase("Minsk")]
+        [TestCase("string")]
+        public void ValidateCityByName_CityNameReceived_Success(string name)
+        {
+            // Arrange
+
+            // Act
+            void result() => _validator.ValidateCityByName(name);
+
+            // Assert
+            Assert.DoesNotThrow(result);
         }
     }
 }

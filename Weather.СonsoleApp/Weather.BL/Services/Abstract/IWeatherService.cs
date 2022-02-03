@@ -5,7 +5,6 @@ namespace Weather.BL.Services.Abstract
 {
     public interface IWeatherService
     {
-        // Task<string> GetWeatherAsync(string cityName);
-        Task<WeatherResponseNew> GetWeatherAsync(string cityName);
+        Task<WeatherResponseMessage> GetWeatherAsync(string cityName);
     }
 }
