@@ -71,10 +71,11 @@ namespace Weather.Tests.Service
             Assert.IsTrue(result.IsError);
         }
 
-        [TestCase("")]
-        public  void GetWeatherAsync_ReceivedRepositoryError_ReceivedError(string name)
+        [Test]
+        public  void GetWeatherAsync_ReceivedRepositoryError_ReceivedError()
         {
             // Arrange
+            var name = "";
             var expectedExcetpion = new Exception();
             _weatherRepositoryMock.Setup(x => x.GetWeatherAsync(name)).ReturnsAsync(() => throw  new Exception());
 
