@@ -1,13 +1,10 @@
-﻿using AppConfiguration.AppConfig;
-using Moq;
+﻿using Moq;
 using NUnit.Framework;
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Weather.BL.Services;
 using Weather.BL.Validators.Abstract;
 using Weather.DataAccess.Models;
-using Weather.DataAccess.Repositories;
 using Weather.DataAccess.Repositories.Abstrdact;
 
 namespace Weather.Tests.Service
