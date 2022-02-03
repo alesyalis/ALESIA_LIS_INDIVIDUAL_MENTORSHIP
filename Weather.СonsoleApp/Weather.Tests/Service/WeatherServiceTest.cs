@@ -79,7 +79,6 @@ namespace Weather.Tests.Service
             _weatherRepositoryMock.Setup(x => x.GetWeatherAsync(name)).ReturnsAsync(() => throw  new Exception());
 
             // Act
-
             // Assert
             var result = Assert.ThrowsAsync<Exception>( () => _weatherService.GetWeatherAsync(name));
             Assert.AreEqual(expectedExcetpion.Message, result.Message);  
