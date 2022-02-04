@@ -7,13 +7,11 @@ using System.Reflection;
 using System.Web.Mvc;
 using Ninject.Web.Mvc;
 using Weather.BL.Services.Abstract;
-using AppConfiguration.AppConfig;
-using System.Configuration;
 using Weather.BL.Exceptions;
 
 namespace Weather.СonsoleApp
 {
-    public class Program 
+    public class Program
     {
         private static IWeatherService _weatherService;
         static async Task Main(string[] args)
@@ -26,27 +24,47 @@ namespace Weather.СonsoleApp
 
             _weatherService = kernel.Get<IWeatherService>();
 
-            while (true)
+            bool showMenu = true;
+            while (showMenu)
             {
-                try
-                {
-                   Console.WriteLine("Enter the name of the city");
-                   var cityName = Console.ReadLine();
-                   var weather = await _weatherService.GetWeatherAsync(cityName);
-                   Console.WriteLine("В {0}: {1} °C {2} ", weather.Name, weather.Main.Temp, weather.Main.Description);
-                }
-                catch (ArgumentNullException ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-                catch (ValidationException ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("City not found\n");
-                }
+                showMenu = await MainMenu();
+            }
+        }
+
+        private static async Task<bool> MainMenu()
+        {
+            Console.WriteLine("Select an action:");
+            Console.WriteLine("If you want to know the weather in the city, enter 1");
+            Console.WriteLine("If you want to close the application, enter 2");
+
+            switch (Console.ReadLine())
+            {
+                case "1":
+                    await GetWeatherByCityNameAsync();
+                    return true;
+                case "2":
+                    return false;
+                default:
+                    return true;
+            }
+        }
+
+        private static async Task GetWeatherByCityNameAsync()
+        {
+            try
+            {
+                Console.WriteLine("Enter the name of the city");
+                var cityName = Console.ReadLine();
+                var weather = await _weatherService.GetWeatherAsync(cityName);
+                Console.WriteLine(weather.Message);
+            }
+            catch (ValidationException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Unhand exeption :" + ex.Message);
             }
         }
     }
