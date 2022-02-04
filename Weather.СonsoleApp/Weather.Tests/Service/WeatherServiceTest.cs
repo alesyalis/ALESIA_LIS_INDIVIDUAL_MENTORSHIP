@@ -73,7 +73,7 @@ namespace Weather.Tests.Service
         }
 
         [Test]
-        public  void GetWeatherAsync_ReceivedRepositoryError_ReceivedError()
+        public  void GetWeatherAsync_RepositoryThrowsIsExeption_ReceivedError()
         {
             // Arrange
             var name = "";
@@ -87,16 +87,16 @@ namespace Weather.Tests.Service
         }
 
         [Test]
-        public void GetWeatherAsync_ReceivedValidatorError_ReceivedError()
+        public void GetWeatherAsync_ValidatorThrowsIsExeption_ReceivedError()
         {
             // Arrange
             var name = "";
-            var expectedExcetpion = new ValidationException();
-            _validatorMock.Setup(x => x.ValidateCityByName(name)).Throws<ValidationException>();
+            var expectedExcetpion = new ValidationException("Entering the city is required\n");
+            _validatorMock.Setup(x => x.ValidateCityByName(name)).Throws(expectedExcetpion);
 
             // Act
             // Assert
-            var result = Assert.ThrowsAsync<ValidationException>(() => _weatherService.GetWeatherAsync(name));
+            Exception result = Assert.ThrowsAsync<ValidationException>(() => _weatherService.GetWeatherAsync(name));
             Assert.AreEqual(expectedExcetpion.Message, result.Message);
         }
     }

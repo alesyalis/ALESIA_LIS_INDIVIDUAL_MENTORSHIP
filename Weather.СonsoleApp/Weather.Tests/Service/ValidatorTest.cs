@@ -35,7 +35,6 @@ namespace Weather.Tests.Service
         public void ValidateCityByName_CityNameReceived_Success(string name)
         {
             // Arrange
-
             // Act
             void result() => _validator.ValidateCityByName(name);
 
