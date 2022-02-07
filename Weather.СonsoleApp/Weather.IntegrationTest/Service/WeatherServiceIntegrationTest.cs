@@ -23,12 +23,12 @@ namespace Weather.IntegrationTest.Service
             _validator = new Validator();
             _weatherService = new WeatherService(_weatherRepository, _validator);
         }
-
-        [Theory]
-        [InlineData("Minsk")]
-        public async Task GetWeatherAsync_CorrectWeatherIsReceived_IsErrorFalseAndMessageIsGenerated(string name)
+       
+        [Fact]
+        public async Task GetWeatherAsync_CorrectWeatherIsReceived_IsErrorFalseAndMessageIsGenerated()
         {
             // Arrange
+            var name = "Minsk";
             _validator.ValidateCityByName(name);
             var model = await _weatherRepository.GetWeatherAsync(name);
             var message = $"In {model.Name}: {model.Main.Temp} ";
@@ -41,11 +41,11 @@ namespace Weather.IntegrationTest.Service
             Assert.Equal(message, messageResult);
         }
 
-        [Theory]
-        [InlineData("gdrh")]
-        public async Task GetWeatherAsync_ReceivedIncorrectWeather_IsErrorTrue(string name)
+        [Fact]
+        public async Task GetWeatherAsync_ReceivedIncorrectWeather_IsErrorTrue()
         {
             // Arrange
+            var name = "gdrh";
             _validator.ValidateCityByName(name);
             await _weatherRepository.GetWeatherAsync(name);
 
@@ -56,11 +56,11 @@ namespace Weather.IntegrationTest.Service
             Assert.True(response.IsError);
         }
 
-        [Theory]
-        [InlineData("")]
-        public async Task GetWeatherAsync_ValidatorThrowsIsExeption_ReceivedError(string name)
+        [Fact]
+        public async Task GetWeatherAsync_ValidatorThrowsIsExeption_ReceivedError()
         {
             // Arrange
+            var name = "";
             void actualResult() => _validator.ValidateCityByName(name);
             await _weatherRepository.GetWeatherAsync(name);
             var message = "Entering the city is required\n";
