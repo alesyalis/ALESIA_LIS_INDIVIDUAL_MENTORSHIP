@@ -63,7 +63,7 @@ namespace Weather.IntegrationTest.Service
             // Arrange
             var name = "";
             void actualResult() => _validator.ValidateCityByName(name);
-           // await _weatherRepository.GetWeatherAsync(name);
+            await _weatherRepository.GetWeatherAsync(name);
             var message = "Entering the city is required\n";
 
             //Act
