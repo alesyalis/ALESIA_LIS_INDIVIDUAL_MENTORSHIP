@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Weather.BL.Exceptions;
 using Weather.BL.Services;
 using Weather.BL.Validators.Abstract;
@@ -10,15 +11,15 @@ namespace Weather.IntegrationTest.Service
 {
     public class WeatherServiceIntegrationTest
     {
-        private WeatherService _weatherService;
-        private IWeatherRepository _weatherRepository;
-        private IValidator _validator;
-        private IConfigTest _configuratio;
+        private readonly WeatherService _weatherService;
+        private readonly IWeatherRepository _weatherRepository;
+        private readonly IValidator _validator;
+        private readonly ConfigTest _configuratio;
 
 
         public  WeatherServiceIntegrationTest()
         {
-            _configuratio = new IConfigTest();
+            _configuratio = new ConfigTest();
             _weatherRepository = new WeatherRepository(_configuratio);
             _validator = new Validator();
             _weatherService = new WeatherService(_weatherRepository, _validator);
@@ -29,16 +30,16 @@ namespace Weather.IntegrationTest.Service
         {
             // Arrange
             var name = "Minsk";
-            _validator.ValidateCityByName(name);
             var model = await _weatherRepository.GetWeatherAsync(name);
             var message = $"In {model.Name}: {model.Main.Temp} ";
 
             //Act
             var response = await _weatherService.GetWeatherAsync(name);
-            var messageResult = response.Message.Substring(0, response.Message.IndexOf('°'));
+            var messageResult = Regex.Split(response.Message, "°");
+
             // Assert
             Assert.False(response.IsError);
-            Assert.Equal(message, messageResult);
+            Assert.Equal(message, messageResult[0]);
         }
 
         [Fact]
@@ -47,13 +48,13 @@ namespace Weather.IntegrationTest.Service
             // Arrange
             var name = "gdrh";
             _validator.ValidateCityByName(name);
-            await _weatherRepository.GetWeatherAsync(name);
-
+            var message = $"{name} not found";
             //Act
             var response = await _weatherService.GetWeatherAsync(name);
             
             // Assert
             Assert.True(response.IsError);
+            Assert.Equal(message, response.Message);
         }
 
         [Fact]
@@ -62,7 +63,7 @@ namespace Weather.IntegrationTest.Service
             // Arrange
             var name = "";
             void actualResult() => _validator.ValidateCityByName(name);
-            await _weatherRepository.GetWeatherAsync(name);
+           // await _weatherRepository.GetWeatherAsync(name);
             var message = "Entering the city is required\n";
 
             //Act

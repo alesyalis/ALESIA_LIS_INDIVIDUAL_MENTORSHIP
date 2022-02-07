@@ -1,7 +1,7 @@
 ﻿using AppConfiguration.AppConfig;
 namespace Weather.IntegrationTest
 {
-    public class IConfigTest : IConfig
+    public class ConfigTest : IConfig
     {
         public string Url =>  "https://api.openweathermap.org/data/2.5/weather?q";
 
