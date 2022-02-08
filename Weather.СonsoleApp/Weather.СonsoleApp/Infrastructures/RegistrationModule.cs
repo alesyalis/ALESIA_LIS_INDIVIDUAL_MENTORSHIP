@@ -12,7 +12,6 @@ namespace Weather.СonsoleApp.Infrastructures
         {
             Bind<IWeatherService>().To<WeatherService>();
             Bind<IConfig>().To<Config>().InSingletonScope();
-
         }
     }
 }
