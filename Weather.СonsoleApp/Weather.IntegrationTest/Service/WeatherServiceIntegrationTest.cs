@@ -14,13 +14,13 @@ namespace Weather.IntegrationTest.Service
         private readonly WeatherService _weatherService;
         private readonly IWeatherRepository _weatherRepository;
         private readonly IValidator _validator;
-        private readonly ConfigTest _configuratio;
+        private readonly ConfigTest _configuration;
 
 
         public  WeatherServiceIntegrationTest()
         {
-            _configuratio = new ConfigTest();
-            _weatherRepository = new WeatherRepository(_configuratio);
+            _configuration = new ConfigTest();
+            _weatherRepository = new WeatherRepository(_configuration);
             _validator = new Validator();
             _weatherService = new WeatherService(_weatherRepository, _validator);
         }
@@ -30,16 +30,13 @@ namespace Weather.IntegrationTest.Service
         {
             // Arrange
             var name = "Minsk";
-            var model = await _weatherRepository.GetWeatherAsync(name);
-            var message = $"In {model.Name}: {model.Main.Temp} ";
 
             //Act
             var response = await _weatherService.GetWeatherAsync(name);
-            var messageResult = Regex.Split(response.Message, "°");
 
             // Assert
             Assert.False(response.IsError);
-            Assert.Equal(message, messageResult[0]);
+            Regex.IsMatch(response.Message, @"(\w?)(.*?)\.| (\B\W)(.*?)\.", RegexOptions.IgnoreCase);
         }
 
         [Fact]
@@ -47,7 +44,6 @@ namespace Weather.IntegrationTest.Service
         {
             // Arrange
             var name = "gdrh";
-            _validator.ValidateCityByName(name);
             var message = $"{name} not found";
             //Act
             var response = await _weatherService.GetWeatherAsync(name);
@@ -62,13 +58,11 @@ namespace Weather.IntegrationTest.Service
         {
             // Arrange
             var name = "";
-            void actualResult() => _validator.ValidateCityByName(name);
-            await _weatherRepository.GetWeatherAsync(name);
             var message = "Entering the city is required\n";
 
             //Act
             // Assert
-            var result = Assert.Throws<ValidationException>((actualResult));
+            var result = Assert.Throws<ValidationException>(() => _validator.ValidateCityByName(name));
             Assert.Equal(message, result.Message);
         }
     }
