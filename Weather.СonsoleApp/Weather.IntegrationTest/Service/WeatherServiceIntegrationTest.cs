@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Weather.BL.Exceptions;
 using Weather.BL.Services;
 using Weather.BL.Validators.Abstract;
@@ -33,10 +32,16 @@ namespace Weather.IntegrationTest.Service
 
             //Act
             var response = await _weatherService.GetWeatherAsync(name);
+            var regex = @"(\w?)(.*?)\.| (\B\W)(.*?)\.";
+            var description1 = "Dress warmly.";
+            var description2 = "It's fresh.";
+            var description3 = "Good weather!";
+            var description4 = "It's time to go to the beach";
+            var temp = $"^In {name}: {regex} °C ({description1}|{description2}|{description3}|{description4})$";
 
             // Assert
             Assert.False(response.IsError);
-            Regex.IsMatch(response.Message, @"(\w?)(.*?)\.| (\B\W)(.*?)\.", RegexOptions.IgnoreCase);
+            Assert.Matches(temp, response.Message);
         }
 
         [Fact]
@@ -45,6 +50,7 @@ namespace Weather.IntegrationTest.Service
             // Arrange
             var name = "gdrh";
             var message = $"{name} not found";
+
             //Act
             var response = await _weatherService.GetWeatherAsync(name);
             
