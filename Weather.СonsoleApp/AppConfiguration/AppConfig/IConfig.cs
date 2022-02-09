@@ -2,8 +2,14 @@
 {
     public interface IConfig
     {
-        string Url { get;  }
+        string UrlBase { get;  }
+
+        string UrlWeather { get; }
+
+        string UrlForecast { get; } 
 
         string ApiKey { get;  }
+
+        string UrlLocationCity { get; } 
     }
 }

@@ -14,6 +14,7 @@ namespace Weather.СonsoleApp
     public class Program
     {
         private static IWeatherService _weatherService;
+        private static IForecastService _forecastService;
         static async Task Main(string[] args)
         {
             NinjectModule serviceModule = new RegistrationModule();
@@ -23,6 +24,7 @@ namespace Weather.СonsoleApp
             DependencyResolver.SetResolver(new NinjectDependencyResolver(kernel));
 
             _weatherService = kernel.Get<IWeatherService>();
+            _forecastService = kernel.Get<IForecastService>();
 
             bool showMenu = true;
             while (showMenu)
@@ -36,6 +38,7 @@ namespace Weather.СonsoleApp
             Console.WriteLine("Select an action:");
             Console.WriteLine("If you want to know the weather in the city, enter 1");
             Console.WriteLine("If you want to close the application, enter 2");
+            Console.WriteLine("If you want to know the weather forecast in the city for the next few days, enter 3");
 
             switch (Console.ReadLine())
             {
@@ -44,6 +47,9 @@ namespace Weather.СonsoleApp
                     return true;
                 case "2":
                     return false;
+                case "3":
+                    await GetForecastByCityNameAsync();
+                    return true;
                 default:
                     return true;
             }
@@ -55,8 +61,36 @@ namespace Weather.СonsoleApp
             {
                 Console.WriteLine("Enter the name of the city");
                 var cityName = Console.ReadLine();
+
                 var weather = await _weatherService.GetWeatherAsync(cityName);
                 Console.WriteLine(weather.Message);
+
+
+            }
+            catch (ValidationException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Unhand exeption :" + ex.Message);
+            }
+        }
+        private static async Task GetForecastByCityNameAsync()
+        {
+            try
+            {
+                Console.WriteLine("Enter the name of the city");
+                var cityName = Console.ReadLine();
+                Console.WriteLine("For how many days do you want to know the weather?");
+                var day = Convert.ToInt32(Console.ReadLine());
+
+                var weather = await _forecastService.GetForecastAsync(cityName, day);
+                foreach (var temp in weather)
+                {
+                    Console.WriteLine(temp.Message);
+
+                }
             }
             catch (ValidationException ex)
             {

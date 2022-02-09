@@ -5,12 +5,20 @@ namespace Weather.IntegrationTest
 {
     public class ConfigTest : IConfig
     {
-        public string Url
+        public string UrlBase
         {
             get
             {
                 return new ConfigurationBuilder().AddJsonFile("appsettings.json")
-                                                 .Build()["url"];
+                                                 .Build()["urlBase"];
+            }
+        }
+        public string UrlWeather
+        {
+            get
+            {
+                return new ConfigurationBuilder().AddJsonFile("appsettings.json")
+                                                 .Build()["urlWeather"];
             }
         }
 
@@ -22,5 +30,9 @@ namespace Weather.IntegrationTest
                                                  .Build()["ApiKey"];
             }
         }
+
+        public string UrlForecast => throw new System.NotImplementedException();
+
+        public string UrlLocationCity => throw new System.NotImplementedException();
     }
 }
