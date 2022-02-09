@@ -39,7 +39,7 @@ namespace Weather.Tests.Service
                 Name = cityName,
                 Main = new TemperatureInfo() { Temp = temp, Description = description }
             };
-            var message = $"In {weather.Name}: {weather.Main.Temp} °C {weather.Main.Description} ";
+            var message = $"In {weather.Name}: {weather.Main.Temp} °C now. {weather.Main.Description} ";
 
             _weatherRepositoryMock.Setup(x => x.GetWeatherAsync(cityName)).ReturnsAsync(weather);
 

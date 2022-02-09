@@ -39,7 +39,7 @@ namespace Weather.BL.Services
             var weatherDTO = new WeatherResponseMessage
             {
                 IsError = false,
-                Message = $"In {weatherResponse.Name}: {weatherResponse.Main.Temp} °C {description} "
+                Message = $"In {weatherResponse.Name}: {weatherResponse.Main.Temp} °C now. {description} "
             };
             return weatherDTO;
         }
