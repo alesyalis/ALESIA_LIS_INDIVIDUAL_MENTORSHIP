@@ -25,13 +25,10 @@ namespace Weather.IntegrationTest.Service
         }
        
         [Fact]
-        public async Task GetWeatherAsync_CorrectWeatherIsReceived_IsErrorFalseAndMessageIsGenerated()
+        public async Task GetWeatherAsync_CorrectWeatherReceived_IsErrorFalseAndMessageIsGenerated()
         {
             // Arrange
-            var name = "Minsk";
-
-            //Act
-            var response = await _weatherService.GetWeatherAsync(name);
+            var name = "Moscow";
             var regex = @"(\w?)(.*?)\.| (\B\W)(.*?)\.";
             var description1 = "Dress warmly.";
             var description2 = "It's fresh.";
@@ -39,7 +36,10 @@ namespace Weather.IntegrationTest.Service
             var description4 = "It's time to go to the beach";
             var temp = $"^In {name}: {regex} °C ({description1}|{description2}|{description3}|{description4})$";
 
-            // Assert
+            //Act
+            var response = await _weatherService.GetWeatherAsync(name);
+            
+           // Assert
             Assert.False(response.IsError);
             Assert.Matches(temp, response.Message);
         }

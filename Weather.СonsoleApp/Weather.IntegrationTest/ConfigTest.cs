@@ -13,8 +13,8 @@ namespace Weather.IntegrationTest
         {
             var config = new ConfigurationBuilder().AddJsonFile("appsettings.json")
                                                    .Build();
-            ApiKey = config["AppString:0:ApiKey"];
-            Url = config["AppString:0:Url"];
+            ApiKey = config["ApiKey"];
+            Url = config["Url"];
         }
     }
    
