@@ -34,7 +34,7 @@ namespace Weather.IntegrationTest.Service
             var description2 = "It's fresh.";
             var description3 = "Good weather!";
             var description4 = "It's time to go to the beach";
-            var temp = $"^In {name}: {regex} °C ({description1}|{description2}|{description3}|{description4})$";
+            var temp = $"^In {name}: {regex} °C now. ({description1}|{description2}|{description3}|{description4})$";
 
             //Act
             var response = await _weatherService.GetWeatherAsync(name);
