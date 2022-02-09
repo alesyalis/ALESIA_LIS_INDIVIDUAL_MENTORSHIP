@@ -34,12 +34,10 @@ namespace Weather.BL.Services
                 return list;
             }
 
-            var description = GetForecastDescription(weather);
-
-            return MapToWeatherResponseDTO(weather, description);
+            return MapToWeatherResponseDTO(weather);
 
         }
-        private List<ForecastResponseMessage> MapToWeatherResponseDTO(ForecastResponse forecastResponse, string description)
+        private List<ForecastResponseMessage> MapToWeatherResponseDTO(ForecastResponse forecastResponse)
         {
             var responseMessage = new List<ForecastResponseMessage> { };
 
@@ -48,20 +46,24 @@ namespace Weather.BL.Services
                 var main = new InfoForecast
                 { Main = infoForecast.Main };
 
+                var dect = GetForecastDescription(infoForecast);
+
                 var weatherDTO = new ForecastResponseMessage
                 {
-                    Message = $"In {forecastResponse.City.Name}: {main.Main.Temp} °C now. {description}"
+                    Message = $"In {forecastResponse.City.Name}: {main.Main.Temp} °C now. {dect}"
                 };
                 responseMessage.Add(weatherDTO);
             }
             return responseMessage;
         }
-        private string GetForecastDescription(ForecastResponse weatherResponse)
+        private string GetForecastDescription(InfoForecast infoForecast)
         {
-            var temp = weatherResponse.List;
+            var dec = new ForecastResponse { };
 
-            var temperature = temp.FirstOrDefault().Main.Temp;
-            var description = temp.FirstOrDefault().Main.Description;
+            var forecastDescription = infoForecast.Main;
+            var temperature = forecastDescription.Temp;
+            var description = forecastDescription.Description;
+
             if (temperature < 0)
                 return description = "Dress warmly.";
             if (temperature >= 0 && temperature <= 20)
@@ -70,6 +72,7 @@ namespace Weather.BL.Services
                 return description = "Good weather!";
             else
                 return description = "It's time to go to the beach";
+
         }
     }
 }
