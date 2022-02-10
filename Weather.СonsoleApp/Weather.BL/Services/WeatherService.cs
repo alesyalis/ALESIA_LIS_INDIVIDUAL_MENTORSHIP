@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Weather.BL.DTOs;
 using Weather.BL.Services.Abstract;
 using Weather.BL.Validators.Abstract;
@@ -95,7 +94,6 @@ namespace Weather.BL.Services
             var temperature = forecastDescription.Temp;
             var description = forecastDescription.Description;
             return GetDescription(temperature);
-
         }
 
         private string GetDescription(double temperature)

@@ -10,6 +10,7 @@ namespace Weather.DataAccess.Models
 
         [JsonProperty("temp_max")]
         public double MaxTemp { get; set; }
-       public DateTime DateTime { get; set; }  
+
+        public DateTime DateTime { get; set; }
     }
 }

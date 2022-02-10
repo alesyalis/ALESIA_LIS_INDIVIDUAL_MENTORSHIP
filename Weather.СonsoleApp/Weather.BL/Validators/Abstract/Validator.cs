@@ -21,7 +21,5 @@ namespace Weather.BL.Validators.Abstract
                 throw new ValidationException("Input number of days is required\n");
             }
         }
-
-
     }
 }
