@@ -1,6 +1,7 @@
 ﻿using Moq;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Weather.BL.Exceptions;
 using Weather.BL.Services;
@@ -98,6 +99,35 @@ namespace Weather.Tests.Service
             // Assert
             Exception result = Assert.ThrowsAsync<ValidationException>(() => _weatherService.GetWeatherAsync(name));
             Assert.AreEqual(expectedExcetpion.Message, result.Message);
+        }
+
+        [TestCase("Minsk", 2, -1, "Dress warmly.", "01.01.001 00:00:00")]
+        [TestCase("London",3, 10, "It's fresh.", "01.01.001 00:00:00")]
+        public async Task GetАщкусфыеAsync_CorrectWeatherIsReceived_IsErrorFalseAndMessageIsGenerated(string cityName, int days, double temp, string description, DateTime date)
+        {
+            // Arrange
+            var main = new ForecastDescription() { Temp = temp, Description = description };
+            var list = new List<InfoForecast> () { };
+            var listForecast = new InfoForecast { Main = main };
+            list.Add(listForecast);
+            var weather = new ForecastResponse()
+            {
+                CityName = new CityForecast { Name = cityName },
+                List = list
+            };
+
+            var message = $" {date} In {weather.CityName.Name}: {main.Temp} °C now. {main.Description}\n";
+
+            _weatherRepositoryMock.Setup(x => x.GetForecastAsync(cityName, days)).ReturnsAsync(weather);
+
+            // Act
+            var result = await _weatherService.GetForecastAsync(cityName, days);
+
+            // Assert
+            _validatorMock.Verify(x => x.ValidateForecast(cityName, days), Times.Once());
+            Assert.IsNotNull(result);
+            Assert.AreEqual(message, result.Message);
+            Assert.IsFalse(result.IsError);
         }
     }
 }

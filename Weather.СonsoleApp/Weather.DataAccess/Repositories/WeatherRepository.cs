@@ -34,13 +34,13 @@ namespace Weather.DataAccess.Repositories
         public async Task<ForecastResponse> GetForecastAsync(string cityName, int days)
         {
             var locations = await GetLocationAsync(cityName);
-            var lat = locations.FirstOrDefault()?.LocationLatitude;
-            var lon = locations.FirstOrDefault()?.LocationLongitude;
+            var locationLatitudeat = locations.FirstOrDefault()?.LocationLatitude;
+            var locationLongitudeon = locations.FirstOrDefault()?.LocationLongitude;
             var urlBase = _configuration.UrlBase;
             var urlForecast = _configuration.UrlForecast;
             var key = _configuration.ApiKey;
 
-            var response = await _httpClient.GetAsync($"{urlBase}{urlForecast}lat={lat}&lon={lon}&cnt={days}&units=metric&appid={key}");
+            var response = await _httpClient.GetAsync($"{urlBase}{urlForecast}lat={locationLatitudeat}&lon={locationLongitudeon}&cnt={days}&units=metric&appid={key}");
             var responceBody = await response.Content.ReadAsStringAsync();
             var weatherResponсe = JsonConvert.DeserializeObject<ForecastResponse>(responceBody);
 
