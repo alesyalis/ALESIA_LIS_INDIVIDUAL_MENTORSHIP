@@ -11,8 +11,6 @@ namespace Weather.СonsoleApp.Infrastructures
         public override void Load()
         {
             Bind<IWeatherService>().To<WeatherService>();
-            Bind<IForecastService>().To<ForecastService>();
-            
             Bind<IConfig>().To<Config>().InSingletonScope();
         }
     }

@@ -14,7 +14,6 @@ namespace Weather.СonsoleApp
     public class Program
     {
         private static IWeatherService _weatherService;
-        private static IForecastService _forecastService;
         static async Task Main(string[] args)
         {
             NinjectModule serviceModule = new RegistrationModule();
@@ -24,7 +23,6 @@ namespace Weather.СonsoleApp
             DependencyResolver.SetResolver(new NinjectDependencyResolver(kernel));
 
             _weatherService = kernel.Get<IWeatherService>();
-            _forecastService = kernel.Get<IForecastService>();
 
             bool showMenu = true;
             while (showMenu)
@@ -85,7 +83,7 @@ namespace Weather.СonsoleApp
                 Console.WriteLine("For how many days do you want to know the weather?");
                 var day = Convert.ToInt32(Console.ReadLine());
 
-                var weather = await _forecastService.GetForecastAsync(cityName, day);
+                var weather = await _weatherService.GetForecastAsync(cityName, day);
                 foreach (var temp in weather)
                 {
                     Console.WriteLine(temp.Message);
