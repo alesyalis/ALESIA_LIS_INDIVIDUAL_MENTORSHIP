@@ -47,9 +47,9 @@ namespace Weather.BL.Services
                 var messages = new ResponseMessage { Message = messageForecast };
                 return messages;
             }
-            var temp = GetForecastMessage(weatherForecast);
+            var responseMessage = GetForecastMessage(weatherForecast);
             
-            return temp;
+            return responseMessage;
         }
 
         private ResponseMessage GetWeatherResponseMessage(WeatherResponse weatherResponse, string description)
