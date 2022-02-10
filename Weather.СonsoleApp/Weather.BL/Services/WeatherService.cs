@@ -36,7 +36,7 @@ namespace Weather.BL.Services
 
         }
 
-        public async Task<List<ResponseMessage>> GetForecastAsync(string cityName, int days)
+        public async Task<ResponseMessage> GetForecastAsync(string cityName, int days)
         {
             _validator.ValidateForecast(cityName, days);
 
@@ -44,13 +44,13 @@ namespace Weather.BL.Services
 
             if (weatherForecast.List == null)
             {
-                var messageForecast = new ResponseMessage() { IsError = true, Message = $"{cityName} not found" };
-                var messages = new List<ResponseMessage>();
-                messages.Add(messageForecast);
+                var messageForecast = $"{cityName} not found";
+                var messages = new ResponseMessage { Message = messageForecast };
                 return messages;
             }
-
-            return GetForecastMessage(weatherForecast);
+            var temp = GetForecastMessage(weatherForecast);
+            
+            return temp;
         }
 
         private ResponseMessage GetWeatherResponseMessage(WeatherResponse weatherResponse, string description)
@@ -63,10 +63,9 @@ namespace Weather.BL.Services
             return weatherDTO;
         }
 
-        private List<ResponseMessage> GetForecastMessage(ForecastResponse forecastResponse)
+        private ResponseMessage GetForecastMessage(ForecastResponse forecastResponse)
         {
-            var responseMessage = new List<ResponseMessage> { };
-
+            var responseMessage = new ResponseMessage { };
             foreach (var infoForecast in forecastResponse.List)
             {
                 var main = infoForecast.Main;
@@ -77,8 +76,9 @@ namespace Weather.BL.Services
                 {
                     Message = $" {date} In {forecastResponse.CityName.Name}: {main.Temp} °C now. {dect}"
                 };
-                responseMessage.Add(weatherDTO);
+                responseMessage.Message += $"{weatherDTO.Message}\n";
             }
+
             return responseMessage;
         }
 

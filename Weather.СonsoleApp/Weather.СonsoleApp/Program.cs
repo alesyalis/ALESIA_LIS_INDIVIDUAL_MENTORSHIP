@@ -84,11 +84,11 @@ namespace Weather.СonsoleApp
                 var day = Convert.ToInt32(Console.ReadLine());
 
                 var weather = await _weatherService.GetForecastAsync(cityName, day);
-                foreach (var temp in weather)
-                {
-                    Console.WriteLine(temp.Message);
+               // foreach (var temp in weather)
+               // {
+                    Console.WriteLine(weather.Message);
 
-                }
+               // }
             }
             catch (ValidationException ex)
             {

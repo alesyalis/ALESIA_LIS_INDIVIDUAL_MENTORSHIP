@@ -60,7 +60,7 @@ namespace Weather.IntegrationTest.Service
         }
 
         [Fact]
-        public async Task GetWeatherAsync_ValidatorThrowsIsExeption_ReceivedError()
+        public void GetWeatherAsync_ValidatorThrowsIsExeption_ReceivedError()
         {
             // Arrange
             var name = "";
