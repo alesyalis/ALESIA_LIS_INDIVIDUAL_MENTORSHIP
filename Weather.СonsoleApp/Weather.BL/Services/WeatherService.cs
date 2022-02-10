@@ -40,17 +40,17 @@ namespace Weather.BL.Services
         {
             _validator.ValidateCityByName(cityName);
 
-            var weather = await _weatherRepository.GetForecastAsync(cityName, days);
+            var weatherForecast = await _weatherRepository.GetForecastAsync(cityName, days);
 
-            if (weather.List == null)
+            if (weatherForecast.List == null)
             {
-                var message = new ForecastResponseMessage() { IsError = true, Message = $"{cityName} not found" };
-                var list = new List<ForecastResponseMessage>();
-                list.Add(message);
-                return list;
+                var messageForecast = new ForecastResponseMessage() { IsError = true, Message = $"{cityName} not found" };
+                var messages = new List<ForecastResponseMessage>();
+                messages.Add(messageForecast);
+                return messages;
             }
 
-            return GetForecastMessage(weather);
+            return GetForecastMessage(weatherForecast);
         }
 
         private WeatherResponseMessage GetWeatherResponseMessage(WeatherResponse weatherResponse, string description)
