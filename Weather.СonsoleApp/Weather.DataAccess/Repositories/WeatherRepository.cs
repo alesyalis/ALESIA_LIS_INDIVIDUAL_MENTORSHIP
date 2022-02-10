@@ -33,15 +33,15 @@ namespace Weather.DataAccess.Repositories
         }
         public async Task<ForecastResponse> GetForecastAsync(string cityName, int days)
         {
-            var location = await GetLocationAsync(cityName);
-            var lat = location?.FirstOrDefault()?.LocationLatitude;
-            var lon = location?.FirstOrDefault()?.LocationLongitude;
+            var locations = await GetLocationAsync(cityName);
+            var lat = locations.FirstOrDefault()?.LocationLatitude;
+            var lon = locations.FirstOrDefault()?.LocationLongitude;
             var urlBase = _configuration.UrlBase;
             var urlForecast = _configuration.UrlForecast;
             var key = _configuration.ApiKey;
 
-            var responce = await _httpClient.GetAsync($"{urlBase}{urlForecast}lat={lat}&lon={lon}&cnt={days}&units=metric&appid={key}");
-            var responceBody = await responce.Content.ReadAsStringAsync();
+            var response = await _httpClient.GetAsync($"{urlBase}{urlForecast}lat={lat}&lon={lon}&cnt={days}&units=metric&appid={key}");
+            var responceBody = await response.Content.ReadAsStringAsync();
             var weatherResponсe = JsonConvert.DeserializeObject<ForecastResponse>(responceBody);
 
             return weatherResponсe;
@@ -50,8 +50,8 @@ namespace Weather.DataAccess.Repositories
         {
             var key = _configuration.ApiKey;
             var url = _configuration.UrlLocationCity;
-            var responce = await _httpClient.GetAsync($"{url}{cityName}&appid={key}");
-            var responceBody = await responce.Content.ReadAsStringAsync();
+            var response = await _httpClient.GetAsync($"{url}{cityName}&appid={key}");
+            var responceBody = await response.Content.ReadAsStringAsync();
             var locationResponсe = JsonConvert.DeserializeObject<List<LocationCity>>(responceBody);
 
             return locationResponсe;
