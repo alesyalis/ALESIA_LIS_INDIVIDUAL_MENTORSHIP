@@ -10,5 +10,7 @@ namespace Weather.DataAccess.Models
         public double Temp_min { get; set; }
         public double Temp_max { get; set; }
         public string Description { get; set; }
+
+        public DateTime DateTime { get; set; }  
     }
 }

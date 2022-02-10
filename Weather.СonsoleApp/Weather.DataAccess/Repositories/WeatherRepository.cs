@@ -39,9 +39,11 @@ namespace Weather.DataAccess.Repositories
             var urlBase = _configuration.UrlBase;
             var urlForecast = _configuration.UrlForecast;
             var key = _configuration.ApiKey;
+
             var responce = await _httpClient.GetAsync($"{urlBase}{urlForecast}lat={lat}&lon={lon}&cnt={days}&units=metric&appid={key}");
             var responceBody = await responce.Content.ReadAsStringAsync();
             var weatherResponсe = JsonConvert.DeserializeObject<ForecastResponse>(responceBody);
+
             return weatherResponсe;
         }
         public async Task<List<LocationCity>> GetLocationAsync(string cityName)
@@ -51,6 +53,7 @@ namespace Weather.DataAccess.Repositories
             var responce = await _httpClient.GetAsync($"{url}{cityName}&appid={key}");
             var responceBody = await responce.Content.ReadAsStringAsync();
             var locationResponсe = JsonConvert.DeserializeObject<List<LocationCity>>(responceBody);
+
             return locationResponсe;
         }
     }

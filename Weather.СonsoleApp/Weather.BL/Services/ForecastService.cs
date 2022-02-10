@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Weather.BL.DTOs;
 using Weather.BL.Services.Abstract;
@@ -35,22 +34,21 @@ namespace Weather.BL.Services
             }
 
             return MapToWeatherResponseDTO(weather);
-
         }
+
         private List<ForecastResponseMessage> MapToWeatherResponseDTO(ForecastResponse forecastResponse)
         {
             var responseMessage = new List<ForecastResponseMessage> { };
 
             foreach (var infoForecast in forecastResponse.List)
             {
-                var main = new InfoForecast
-                { Main = infoForecast.Main };
-
+                var main = infoForecast.Main;
                 var dect = GetForecastDescription(infoForecast);
+                var date = infoForecast.Dt_txt;
 
                 var weatherDTO = new ForecastResponseMessage
                 {
-                    Message = $"In {forecastResponse.City.Name}: {main.Main.Temp} °C now. {dect}"
+                    Message = $" {date} In {forecastResponse.City.Name}: {main.Temp} °C now. {dect}"
                 };
                 responseMessage.Add(weatherDTO);
             }
@@ -58,8 +56,6 @@ namespace Weather.BL.Services
         }
         private string GetForecastDescription(InfoForecast infoForecast)
         {
-            var dec = new ForecastResponse { };
-
             var forecastDescription = infoForecast.Main;
             var temperature = forecastDescription.Temp;
             var description = forecastDescription.Description;
@@ -72,7 +68,6 @@ namespace Weather.BL.Services
                 return description = "Good weather!";
             else
                 return description = "It's time to go to the beach";
-
         }
     }
 }

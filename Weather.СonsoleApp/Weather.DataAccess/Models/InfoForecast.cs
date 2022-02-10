@@ -7,6 +7,9 @@ namespace Weather.DataAccess.Models
     public class InfoForecast
     {
         public ForecastDescription Main { get; set; }
-
+        public DateTime Dt_txt { get; set; }
     }
+
+
 }
+
