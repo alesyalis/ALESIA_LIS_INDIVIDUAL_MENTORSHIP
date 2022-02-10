@@ -16,22 +16,22 @@ namespace Weather.BL.Services
         public WeatherService(IWeatherRepository weatherRepository, IValidator validator)
         {
             _weatherRepository = weatherRepository;
-            _validator = validator; 
+            _validator = validator;
         }
-      
+
         public async Task<WeatherResponseMessage> GetWeatherAsync(string cityName)
         {
             _validator.ValidateCityByName(cityName);
 
             var weather = await _weatherRepository.GetWeatherAsync(cityName);
-          
+
             if (weather.Main == null)
             {
                 return new WeatherResponseMessage() { IsError = true, Message = $"{cityName} not found" };
             }
 
             var description = GetWeatherDescription(weather);
-            
+
             return GetWeatherResponseMessage(weather, description);
 
         }
@@ -95,20 +95,19 @@ namespace Weather.BL.Services
             var temperature = forecastDescription.Temp;
             var description = forecastDescription.Description;
             return GetDescription(temperature);
-            
+
         }
 
         private string GetDescription(double temperature)
         {
-            var description = "";
             if (temperature < 0)
-                return description = "Dress warmly.";
+                return "Dress warmly.";
             if (temperature >= 0 && temperature <= 20)
-                return description = "It's fresh.";
+                return "It's fresh.";
             if (temperature > 20 && temperature <= 30)
-                return description = "Good weather!";
+                return "Good weather!";
             else
-                return description = "It's time to go to the beach";
+                return "It's time to go to the beach";
         }
     }
 }
