@@ -71,7 +71,7 @@ namespace Weather.BL.Services
             {
                 var main = infoForecast.Main;
                 var dect = GetForecastDescription(infoForecast);
-                var date = infoForecast.Dt_txt;
+                var date = infoForecast.Date;
 
                 var weatherDTO = new ForecastResponseMessage
                 {
