@@ -1,8 +1,13 @@
-﻿namespace Weather.DataAccess.Models
+﻿using Newtonsoft.Json;
+
+namespace Weather.DataAccess.Models
 {
     public class LocationCity
     {
-        public float Lat { get; set; }  
-        public float Lon { get; set; } 
+        [JsonProperty("lat")]
+        public float LocationLatitude { get; set; }
+
+        [JsonProperty("lon")]
+        public float LocationLongitude { get; set; } 
     }
 }

@@ -19,7 +19,7 @@ namespace Weather.BL.Services
             _validator = validator;
         }
 
-        public async Task<WeatherResponseMessage> GetWeatherAsync(string cityName)
+        public async Task<ResponseMessage> GetWeatherAsync(string cityName)
         {
             _validator.ValidateCityByName(cityName);
 
@@ -27,7 +27,7 @@ namespace Weather.BL.Services
 
             if (weather.Main == null)
             {
-                return new WeatherResponseMessage() { IsError = true, Message = $"{cityName} not found" };
+                return new ResponseMessage() { IsError = true, Message = $"{cityName} not found" };
             }
 
             var description = GetWeatherDescription(weather);
@@ -36,16 +36,16 @@ namespace Weather.BL.Services
 
         }
 
-        public async Task<List<ForecastResponseMessage>> GetForecastAsync(string cityName, int days)
+        public async Task<List<ResponseMessage>> GetForecastAsync(string cityName, int days)
         {
-            _validator.ValidateCityByName(cityName);
+            _validator.ValidateForecast(cityName, days);
 
             var weatherForecast = await _weatherRepository.GetForecastAsync(cityName, days);
 
             if (weatherForecast.List == null)
             {
-                var messageForecast = new ForecastResponseMessage() { IsError = true, Message = $"{cityName} not found" };
-                var messages = new List<ForecastResponseMessage>();
+                var messageForecast = new ResponseMessage() { IsError = true, Message = $"{cityName} not found" };
+                var messages = new List<ResponseMessage>();
                 messages.Add(messageForecast);
                 return messages;
             }
@@ -53,9 +53,9 @@ namespace Weather.BL.Services
             return GetForecastMessage(weatherForecast);
         }
 
-        private WeatherResponseMessage GetWeatherResponseMessage(WeatherResponse weatherResponse, string description)
+        private ResponseMessage GetWeatherResponseMessage(WeatherResponse weatherResponse, string description)
         {
-            var weatherDTO = new WeatherResponseMessage
+            var weatherDTO = new ResponseMessage
             {
                 IsError = false,
                 Message = $"In {weatherResponse.Name}: {weatherResponse.Main.Temp} °C now. {description} "
@@ -63,9 +63,9 @@ namespace Weather.BL.Services
             return weatherDTO;
         }
 
-        private List<ForecastResponseMessage> GetForecastMessage(ForecastResponse forecastResponse)
+        private List<ResponseMessage> GetForecastMessage(ForecastResponse forecastResponse)
         {
-            var responseMessage = new List<ForecastResponseMessage> { };
+            var responseMessage = new List<ResponseMessage> { };
 
             foreach (var infoForecast in forecastResponse.List)
             {
@@ -73,9 +73,9 @@ namespace Weather.BL.Services
                 var dect = GetForecastDescription(infoForecast);
                 var date = infoForecast.Date;
 
-                var weatherDTO = new ForecastResponseMessage
+                var weatherDTO = new ResponseMessage
                 {
-                    Message = $" {date} In {forecastResponse.City.Name}: {main.Temp} °C now. {dect}"
+                    Message = $" {date} In {forecastResponse.CityName.Name}: {main.Temp} °C now. {dect}"
                 };
                 responseMessage.Add(weatherDTO);
             }

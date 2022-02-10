@@ -34,8 +34,8 @@ namespace Weather.DataAccess.Repositories
         public async Task<ForecastResponse> GetForecastAsync(string cityName, int days)
         {
             var location = await GetLocationAsync(cityName);
-            var lat = location?.FirstOrDefault()?.Lat;
-            var lon = location?.FirstOrDefault()?.Lon;
+            var lat = location?.FirstOrDefault()?.LocationLatitude;
+            var lon = location?.FirstOrDefault()?.LocationLongitude;
             var urlBase = _configuration.UrlBase;
             var urlForecast = _configuration.UrlForecast;
             var key = _configuration.ApiKey;
