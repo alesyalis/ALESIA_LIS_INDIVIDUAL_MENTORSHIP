@@ -9,7 +9,7 @@ namespace Weather.СonsoleApp.Commands
     public class GetForecastCommand : ICommand
     {
         private IWeatherService _weatherService;
-        
+
         public GetForecastCommand(IWeatherService weatherService)
         {
             _weatherService = weatherService;

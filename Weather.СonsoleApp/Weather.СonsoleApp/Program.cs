@@ -9,6 +9,7 @@ using Ninject.Web.Mvc;
 using Weather.BL.Services.Abstract;
 using Weather.СonsoleApp.Invoker;
 using Weather.СonsoleApp.Commands;
+using AppConfiguration.Interface;
 
 namespace Weather.СonsoleApp
 {
@@ -25,52 +26,36 @@ namespace Weather.СonsoleApp
 
             _weatherService = kernel.Get<IWeatherService>();
 
-
             WeatherInvoker invoker = new WeatherInvoker();
-            GetWeatherCommand getWeatherCommand = new GetWeatherCommand(_weatherService);
-            GetForecastCommand getForecastCommand = new GetForecastCommand(_weatherService);
+
+            ICommand getWeather = new GetWeatherCommand(_weatherService);
+            ICommand getForecast = new GetForecastCommand(_weatherService);
+
+            Switch sw = new Switch();
 
             bool showMenu = true;
             while (showMenu)
             {
-                switch (MainMenu())
+                try
                 {
-                    case 1:
-                        await invoker.SetCommand(getWeatherCommand);
-                        await invoker.Run();
-                        break;
-                    case 2:
-                        await invoker.SetCommand(getForecastCommand);
-                        await invoker.Run();
-                        break;
-                    case 3:
-                        showMenu = false;
-                        break;
-                    default: break; 
+                    Console.WriteLine("Select the desired case : 1 - Weather, 2 - Forecast, 3 - Exit");
+                    int number = int.Parse(Console.ReadLine());
+
+                    switch (number)
+                    {
+                        case 1: await sw.StoreAndExecute(getWeather); break;
+                        case 2: await sw.StoreAndExecute(getForecast); break;
+                        case 3: showMenu = false; break;
+                        default: break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine("Press any key to exit!");
+                    Console.ReadKey();
                 }
             }
-        }
-
-        private static int MainMenu()
-        {
-            var exit = 3;
-            try
-            {
-                Console.WriteLine("Select an action:");
-                Console.WriteLine("If you want to know the weather in the city, enter 1");
-                Console.WriteLine("If you want to know the weather forecast in the city for the next few days, enter 2");
-                Console.WriteLine("If you want to close the application, enter 3");
-
-                return int.Parse(Console.ReadLine());
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine("Press any key to exit!");   
-                Console.ReadKey();
-                return exit;
-            }
-            
         }
     }
 }
