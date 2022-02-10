@@ -7,7 +7,8 @@ using System.Reflection;
 using System.Web.Mvc;
 using Ninject.Web.Mvc;
 using Weather.BL.Services.Abstract;
-using Weather.BL.Exceptions;
+using Weather.СonsoleApp.Invoker;
+using Weather.СonsoleApp.Commands;
 
 namespace Weather.СonsoleApp
 {
@@ -24,80 +25,52 @@ namespace Weather.СonsoleApp
 
             _weatherService = kernel.Get<IWeatherService>();
 
+
+            WeatherInvoker invoker = new WeatherInvoker();
+            GetWeatherCommand getWeatherCommand = new GetWeatherCommand(_weatherService);
+            GetForecastCommand getForecastCommand = new GetForecastCommand(_weatherService);
+
             bool showMenu = true;
             while (showMenu)
             {
-                showMenu = await MainMenu();
+                switch (MainMenu())
+                {
+                    case 1:
+                        await invoker.SetCommand(getWeatherCommand);
+                        await invoker.Run();
+                        break;
+                    case 2:
+                        await invoker.SetCommand(getForecastCommand);
+                        await invoker.Run();
+                        break;
+                    case 3:
+                        showMenu = false;
+                        break;
+                    default: break; 
+                }
             }
         }
 
-        private static async Task<bool> MainMenu()
+        private static int MainMenu()
         {
-            Console.WriteLine("Select an action:");
-            Console.WriteLine("If you want to know the weather in the city, enter 1");
-            Console.WriteLine("If you want to close the application, enter 2");
-            Console.WriteLine("If you want to know the weather forecast in the city for the next few days, enter 3");
-
-            switch (Console.ReadLine())
-            {
-                case "1":
-                    await GetWeatherByCityNameAsync();
-                    return true;
-                case "2":
-                    return false;
-                case "3":
-                    await GetForecastByCityNameAsync();
-                    return true;
-                default:
-                    return true;
-            }
-        }
-
-        private static async Task GetWeatherByCityNameAsync()
-        {
+            var exit = 3;
             try
             {
-                Console.WriteLine("Enter the name of the city");
-                var cityName = Console.ReadLine();
+                Console.WriteLine("Select an action:");
+                Console.WriteLine("If you want to know the weather in the city, enter 1");
+                Console.WriteLine("If you want to know the weather forecast in the city for the next few days, enter 2");
+                Console.WriteLine("If you want to close the application, enter 3");
 
-                var weather = await _weatherService.GetWeatherAsync(cityName);
-                Console.WriteLine(weather.Message);
-
-
-            }
-            catch (ValidationException ex)
-            {
-                Console.WriteLine(ex.Message);
+                return int.Parse(Console.ReadLine());
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Unhand exeption :" + ex.Message);
-            }
-        }
-        private static async Task GetForecastByCityNameAsync()
-        {
-            try
-            {
-                Console.WriteLine("Enter the name of the city");
-                var cityName = Console.ReadLine();
-                Console.WriteLine("For how many days do you want to know the weather?");
-                var day = Convert.ToInt32(Console.ReadLine());
-
-                var weather = await _weatherService.GetForecastAsync(cityName, day);
-               // foreach (var temp in weather)
-               // {
-                    Console.WriteLine(weather.Message);
-
-               // }
-            }
-            catch (ValidationException ex)
-            {
                 Console.WriteLine(ex.Message);
+                Console.WriteLine("Press any key to exit!");   
+                Console.ReadKey();
+                return exit;
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Unhand exeption :" + ex.Message);
-            }
+            
         }
     }
 }

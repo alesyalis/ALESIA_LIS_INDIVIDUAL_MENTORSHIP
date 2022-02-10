@@ -97,7 +97,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\NinjectWebCommon.cs" />
+    <Compile Include="Commands\GetForecastCommand.cs" />
+    <Compile Include="Commands\GetWeatherCommand.cs" />
     <Compile Include="Infrastructures\RegistrationModule.cs" />
+    <Compile Include="Invoker\WeatherInvoker.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

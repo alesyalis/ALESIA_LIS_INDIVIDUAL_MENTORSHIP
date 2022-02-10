@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 
 namespace Weather.DataAccess.Models
@@ -10,7 +9,5 @@ namespace Weather.DataAccess.Models
         public CityForecast CityName { get; set; }
 
         public List<InfoForecast> List { get; set; }  
-
-
     }
 }
