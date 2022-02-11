@@ -175,6 +175,10 @@
       <Project>{0A119D86-A788-4C2D-934F-89983072643A}</Project>
       <Name>Weather.DataAccess</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Weather.СonsoleApp\Weather.СonsoleApp.csproj">
+      <Project>{874FFDE5-1AC5-4F69-80CB-60BA9697167E}</Project>
+      <Name>Weather.СonsoleApp</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

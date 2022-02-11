@@ -31,6 +31,7 @@ namespace Weather.СonsoleApp
             ICommand getWeather = new GetWeatherCommand(_weatherService);
             ICommand getForecast = new GetForecastCommand(_weatherService);
 
+           
             Switch sw = new Switch();
 
             bool showMenu = true;

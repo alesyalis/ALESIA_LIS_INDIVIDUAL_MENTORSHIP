@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using AppConfiguration.Interface;
+using System.Threading.Tasks;
 using Weather.BL.Exceptions;
 using Weather.BL.Services;
 using Weather.BL.Validators.Abstract;
 using Weather.DataAccess.Repositories;
 using Weather.DataAccess.Repositories.Abstrdact;
+using Weather.СonsoleApp.Commands;
 using Xunit;
 
 namespace Weather.IntegrationTest.Service
@@ -14,6 +16,9 @@ namespace Weather.IntegrationTest.Service
         private readonly IWeatherRepository _weatherRepository;
         private readonly IValidator _validator;
         private readonly ConfigTest _configuration;
+        private readonly ICommand _commandForecast;
+        private readonly ICommand _commandWeather;
+        private readonly  Switch _sw;
 
 
         public  WeatherServiceIntegrationTest()
@@ -22,6 +27,9 @@ namespace Weather.IntegrationTest.Service
             _weatherRepository = new WeatherRepository(_configuration);
             _validator = new Validator();
             _weatherService = new WeatherService(_weatherRepository, _validator);
+            _commandForecast = new GetForecastCommand(_weatherService);
+            _commandWeather = new GetWeatherCommand(_weatherService);
+            _sw = new Switch();
         }
        
         [Fact]
@@ -52,11 +60,12 @@ namespace Weather.IntegrationTest.Service
             var message = $"{name} not found";
 
             //Act
-            var response = await _weatherService.GetWeatherAsync(name);
-            
+            //var response = await _weatherService.GetWeatherAsync(name);
+            var result = await Assert.ThrowsAsync<ValidationException>(() => _sw.StoreAndExecute(_commandWeather));
             // Assert
-            Assert.True(response.IsError);
-            Assert.Equal(message, response.Message);
+            Assert.Equal(message, result.Message);
+            //Assert.True(response.IsError);
+            // Assert.Equal(message, response.Message);
         }
 
         [Fact]
@@ -69,6 +78,49 @@ namespace Weather.IntegrationTest.Service
             //Act
             // Assert
             var result = Assert.Throws<ValidationException>(() => _validator.ValidateCityByName(name));
+            Assert.Equal(message, result.Message);
+        }
+
+        [Fact]
+        public async Task GetForecastsync_ReceivedIncorrectWeather_IsErrorTrue()
+        {
+            // Arrange
+            var name = "gdrh";
+            var days = 2;
+            var message = $"{name} not found";
+
+            //Act
+            var result = await Assert.ThrowsAsync<ValidationException>( () =>  _sw.StoreAndExecute(_commandForecast));
+
+            // Assert
+            Assert.Equal(message, result.Message);
+        }
+
+        [Fact]
+        public void GetForecastAsync_ValidatorThrowsIsExeption_ReceivedError()
+        {
+            // Arrange
+            var name = "";
+            var days = 2;
+            var message = "Entering the city is required\n";
+
+            //Act
+            // Assert
+            var result = Assert.Throws<ValidationException>(() => _validator.ValidateForecast(name, days));
+            Assert.Equal(message, result.Message);
+        }
+
+        [Fact]
+        public void GetForecastAsync_ValidatorThrowsIsExeptionIfDaysNull_ReceivedError()
+        {
+            // Arrange
+            var name = "test";
+            var days = 0;
+            var message = "Input number of days is required\n";
+
+            //Act
+            // Assert
+            var result = Assert.Throws<ValidationException>(() => _validator.ValidateForecast(name, days));
             Assert.Equal(message, result.Message);
         }
     }

@@ -44,8 +44,7 @@ namespace Weather.BL.Services
             if (weatherForecast.List == null)
             {
                 var messageForecast = $"{cityName} not found";
-                var messages = new ResponseMessage { Message = messageForecast };
-                return messages;
+                return new ResponseMessage { Message = messageForecast };
             }
             var responseMessage = GetForecastMessage(weatherForecast);
             
