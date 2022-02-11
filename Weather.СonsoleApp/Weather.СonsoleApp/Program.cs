@@ -7,9 +7,9 @@ using System.Reflection;
 using System.Web.Mvc;
 using Ninject.Web.Mvc;
 using Weather.BL.Services.Abstract;
-using Weather.СonsoleApp.Invoker;
 using Weather.СonsoleApp.Commands;
 using AppConfiguration.Interface;
+using System.Collections.Generic;
 
 namespace Weather.СonsoleApp
 {
@@ -26,33 +26,32 @@ namespace Weather.СonsoleApp
 
             _weatherService = kernel.Get<IWeatherService>();
 
-            WeatherInvoker invoker = new WeatherInvoker();
-
             ICommand getWeather = new GetWeatherCommand(_weatherService);
             ICommand getForecast = new GetForecastCommand(_weatherService);
 
-           
-            Switch sw = new Switch();
+            var listCommand = new List<ICommand>();
+            listCommand.Add(getWeather);
+            listCommand.Add(getForecast);
 
             bool showMenu = true;
             while (showMenu)
             {
                 try
                 {
-                    Console.WriteLine("Select the desired case : 1 - Weather, 2 - Forecast, 3 - Exit");
-                    int number = int.Parse(Console.ReadLine());
-
-                    switch (number)
+                    foreach (var command in listCommand)
                     {
-                        case 1: await sw.StoreAndExecute(getWeather); break;
-                        case 2: await sw.StoreAndExecute(getForecast); break;
-                        case 3: showMenu = false; break;
-                        default: break;
+                        Console.WriteLine(command.Title);
                     }
+                    int number = int.Parse(Console.ReadLine());
+                    if (number >= 2)
+                    {
+                        showMenu = false;
+                        return;
+                    }
+                    await listCommand[number].Execute();
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    Console.WriteLine(ex.Message);
                     Console.WriteLine("Press any key to exit!");
                     Console.ReadKey();
                 }

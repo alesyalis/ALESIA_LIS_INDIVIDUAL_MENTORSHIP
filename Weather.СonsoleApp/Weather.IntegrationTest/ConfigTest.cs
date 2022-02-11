@@ -31,8 +31,22 @@ namespace Weather.IntegrationTest
             }
         }
 
-        public string UrlForecast => throw new System.NotImplementedException();
-
-        public string UrlLocationCity => throw new System.NotImplementedException();
+        public string UrlForecast 
+        {
+            get
+            {
+                return new ConfigurationBuilder().AddJsonFile("appsettings.json")
+                                                 .Build()["urlForecast"];
+            }
+        }
+        
+        public string UrlLocationCity
+        {
+            get
+            {
+                return new ConfigurationBuilder().AddJsonFile("appsettings.json")
+                                                 .Build()["urlLocationCity"];
+            }
+        }
     }
 }

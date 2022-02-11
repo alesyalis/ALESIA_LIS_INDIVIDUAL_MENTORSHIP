@@ -18,7 +18,6 @@ namespace Weather.IntegrationTest.Service
         private readonly ConfigTest _configuration;
         private readonly ICommand _commandForecast;
         private readonly ICommand _commandWeather;
-        private readonly  Switch _sw;
 
 
         public  WeatherServiceIntegrationTest()
@@ -29,7 +28,6 @@ namespace Weather.IntegrationTest.Service
             _weatherService = new WeatherService(_weatherRepository, _validator);
             _commandForecast = new GetForecastCommand(_weatherService);
             _commandWeather = new GetWeatherCommand(_weatherService);
-            _sw = new Switch();
         }
        
         [Fact]
@@ -52,6 +50,7 @@ namespace Weather.IntegrationTest.Service
             Assert.Matches(temp, response.Message);
         }
 
+        
         [Fact]
         public async Task GetWeatherAsync_ReceivedIncorrectWeather_IsErrorTrue()
         {
@@ -60,12 +59,11 @@ namespace Weather.IntegrationTest.Service
             var message = $"{name} not found";
 
             //Act
-            //var response = await _weatherService.GetWeatherAsync(name);
-            var result = await Assert.ThrowsAsync<ValidationException>(() => _sw.StoreAndExecute(_commandWeather));
+            var response = await _weatherService.GetWeatherAsync(name);
+
             // Assert
-            Assert.Equal(message, result.Message);
-            //Assert.True(response.IsError);
-            // Assert.Equal(message, response.Message);
+            Assert.True(response.IsError);
+            Assert.Equal(message, response.Message);
         }
 
         [Fact]
@@ -85,15 +83,16 @@ namespace Weather.IntegrationTest.Service
         public async Task GetForecastsync_ReceivedIncorrectWeather_IsErrorTrue()
         {
             // Arrange
-            var name = "gdrh";
+            var name = "qqqqqq";
             var days = 2;
             var message = $"{name} not found";
 
             //Act
-            var result = await Assert.ThrowsAsync<ValidationException>( () =>  _sw.StoreAndExecute(_commandForecast));
+            var response = await _weatherService.GetForecastAsync(name, days);
+
 
             // Assert
-            Assert.Equal(message, result.Message);
+            Assert.Equal(message, response.Message);
         }
 
         [Fact]
