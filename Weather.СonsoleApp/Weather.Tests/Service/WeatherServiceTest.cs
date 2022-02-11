@@ -54,7 +54,8 @@ namespace Weather.Tests.Service
             Assert.IsFalse(result.IsError);
         }
 
-        [TestCase("test")]
+        
+[TestCase("test")]
         [TestCase("!!!!")]
         public async Task GetWeatherAsync_ReceivedIncorrectWeather_IsErrorTrueAndMessageIsGenerated(string name)
         {
@@ -72,7 +73,6 @@ namespace Weather.Tests.Service
             Assert.AreEqual(message, result.Message);
             Assert.IsTrue(result.IsError);
         }
-
         [Test]
         public  void GetWeatherAsync_RepositoryThrowsIsExeption_ReceivedError()
         {
@@ -103,7 +103,7 @@ namespace Weather.Tests.Service
 
         [TestCase("Minsk", 2, -1, "Dress warmly.", "01.01.001 00:00:00")]
         [TestCase("London",3, 10, "It's fresh.", "01.01.001 00:00:00")]
-        public async Task GetАщкусфыеAsync_CorrectWeatherIsReceived_IsErrorFalseAndMessageIsGenerated(string cityName, int days, double temp, string description, DateTime date)
+        public async Task GetForecastAsync_CorrectWeatherIsReceived_IsErrorFalseAndMessageIsGenerated(string cityName, int days, double temp, string description, DateTime date)
         {
             // Arrange
             var main = new ForecastDescription() { Temp = temp, Description = description };
@@ -128,6 +128,53 @@ namespace Weather.Tests.Service
             Assert.IsNotNull(result);
             Assert.AreEqual(message, result.Message);
             Assert.IsFalse(result.IsError);
+        }
+
+        [TestCase("testtt", 2)]
+        public async Task GetForecastAsync_ReceivedIncorrectWeather_IsErrorTrueAndMessageIsGenerated(string name, int days)
+        {
+            // Arrange
+            var weather = new ForecastResponse() { };
+            var message = $"{name} not found";
+            _weatherRepositoryMock.Setup(x => x.GetForecastAsync(name, days)).ReturnsAsync(() => weather);
+
+            // Act
+            var result = await _weatherService.GetForecastAsync(name, days);
+
+            // Assert
+            _validatorMock.Verify(x => x.ValidateForecast(name, days), Times.Once());
+            Assert.IsNotNull(result);
+            Assert.AreEqual(message, result.Message);
+        }
+
+        [Test]
+        public void GetForecastAsync_ValidatorThrowsIsExeptionIfCityNameEmpty_ReceivedError()
+        {
+            // Arrange
+            var name = "";
+            var days = 2;
+            var expectedExcetpion = new ValidationException("Entering the city is required\n");
+            _validatorMock.Setup(x => x.ValidateForecast(name,days )).Throws(expectedExcetpion);
+
+            // Act
+            // Assert
+            Exception result = Assert.ThrowsAsync<ValidationException>(() => _weatherService.GetForecastAsync(name, days));
+            Assert.AreEqual(expectedExcetpion.Message, result.Message);
+        }
+
+        [Test]
+        public void GetForecastAsync_ValidatorThrowsIsExeptionIfDaysNull_ReceivedError()
+        {
+            // Arrange
+            var name = "Minsk";
+            var days = 0;
+            var expectedExcetpion = new ValidationException("Input number of days is required\n");
+            _validatorMock.Setup(x => x.ValidateForecast(name, days)).Throws(expectedExcetpion);
+
+            // Act
+            // Assert
+            Exception result = Assert.ThrowsAsync<ValidationException>(() => _weatherService.GetForecastAsync(name, days));
+            Assert.AreEqual(expectedExcetpion.Message, result.Message);
         }
     }
 }
