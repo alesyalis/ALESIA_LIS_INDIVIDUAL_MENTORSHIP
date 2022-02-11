@@ -22,7 +22,7 @@ namespace Weather.Tests.Service
         {
             _weatherRepositoryMock = new Mock<IWeatherRepository>();
             _validatorMock = new Mock<IValidator>();
-            
+
             _weatherService = new WeatherService(
                 _weatherRepositoryMock.Object,
                 _validatorMock.Object);
@@ -54,8 +54,8 @@ namespace Weather.Tests.Service
             Assert.IsFalse(result.IsError);
         }
 
-        
-[TestCase("test")]
+
+        [TestCase("test")]
         [TestCase("!!!!")]
         public async Task GetWeatherAsync_ReceivedIncorrectWeather_IsErrorTrueAndMessageIsGenerated(string name)
         {
@@ -74,17 +74,17 @@ namespace Weather.Tests.Service
             Assert.IsTrue(result.IsError);
         }
         [Test]
-        public  void GetWeatherAsync_RepositoryThrowsIsExeption_ReceivedError()
+        public void GetWeatherAsync_RepositoryThrowsIsExeption_ReceivedError()
         {
             // Arrange
             var name = "";
             var expectedExcetpion = new Exception();
-            _weatherRepositoryMock.Setup(x => x.GetWeatherAsync(name)).ReturnsAsync(() => throw  new Exception());
+            _weatherRepositoryMock.Setup(x => x.GetWeatherAsync(name)).ReturnsAsync(() => throw new Exception());
 
             // Act
             // Assert
-            var result = Assert.ThrowsAsync<Exception>( () => _weatherService.GetWeatherAsync(name));
-            Assert.AreEqual(expectedExcetpion.Message, result.Message);  
+            var result = Assert.ThrowsAsync<Exception>(() => _weatherService.GetWeatherAsync(name));
+            Assert.AreEqual(expectedExcetpion.Message, result.Message);
         }
 
         [Test]
@@ -102,12 +102,12 @@ namespace Weather.Tests.Service
         }
 
         [TestCase("Minsk", 2, -1, "Dress warmly.", "01.01.001 00:00:00")]
-        [TestCase("London",3, 10, "It's fresh.", "01.01.001 00:00:00")]
+        [TestCase("London", 3, 10, "It's fresh.", "01.01.001 00:00:00")]
         public async Task GetForecastAsync_CorrectWeatherIsReceived_IsErrorFalseAndMessageIsGenerated(string cityName, int days, double temp, string description, DateTime date)
         {
             // Arrange
             var main = new ForecastDescription() { Temp = temp, Description = description };
-            var list = new List<InfoForecast> () { };
+            var list = new List<InfoForecast>() { };
             var listForecast = new InfoForecast { Main = main };
             list.Add(listForecast);
             var weather = new ForecastResponse()
@@ -154,7 +154,7 @@ namespace Weather.Tests.Service
             var name = "";
             var days = 2;
             var expectedExcetpion = new ValidationException("Entering the city is required\n");
-            _validatorMock.Setup(x => x.ValidateForecast(name,days )).Throws(expectedExcetpion);
+            _validatorMock.Setup(x => x.ValidateForecast(name, days)).Throws(expectedExcetpion);
 
             // Act
             // Assert

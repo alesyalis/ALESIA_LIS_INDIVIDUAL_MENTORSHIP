@@ -42,12 +42,14 @@ namespace Weather.СonsoleApp
                     {
                         Console.WriteLine(command.Title);
                     }
+                    Console.WriteLine("\n 3 - Exit");
                     int number = int.Parse(Console.ReadLine());
-                    if (number >= 2)
+                    if (number == 3)
                     {
                         showMenu = false;
                         return;
                     }
+                    
                     await listCommand[number].Execute();
                 }
                 catch (Exception)
