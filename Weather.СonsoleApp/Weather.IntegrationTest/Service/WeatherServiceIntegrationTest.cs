@@ -18,9 +18,10 @@ namespace Weather.IntegrationTest.Service
         private readonly ConfigTest _configuration;
         private readonly ICommand _commandForecast;
         private readonly ICommand _commandWeather;
+       
 
 
-        public  WeatherServiceIntegrationTest()
+        public WeatherServiceIntegrationTest()
         {
             _configuration = new ConfigTest();
             _weatherRepository = new WeatherRepository(_configuration);
@@ -29,7 +30,7 @@ namespace Weather.IntegrationTest.Service
             _commandForecast = new GetForecastCommand(_weatherService);
             _commandWeather = new GetWeatherCommand(_weatherService);
         }
-       
+
         [Fact]
         public async Task GetWeatherAsync_CorrectWeatherReceived_IsErrorFalseAndMessageIsGenerated()
         {
@@ -44,13 +45,55 @@ namespace Weather.IntegrationTest.Service
 
             //Act
             var response = await _weatherService.GetWeatherAsync(name);
-            
-           // Assert
+
+            // Assert
             Assert.False(response.IsError);
             Assert.Matches(temp, response.Message);
         }
 
-        
+        [Fact]
+        public async Task GetForecastAsync_CorrectWeatherReceived_IsErrorFalseAndMessageIsGenerated()
+        {
+            // Arrange
+            var name = "Moscow";
+            var days = 3;
+           
+            var regex = @"(\w?)(.*?)\.| (\B\W)(.*?)\.";
+
+            var description = new string[]
+           {
+                "Dress warmly.",
+                "It's fresh.",
+                "Good weather.",
+                "It's time to go to the beach."
+           };
+            var message = "";
+           
+            var daysOfWeak = new string[]
+            {
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+                "Sunday"
+            };
+            for (var d = 0; d < days; d++)
+            {
+                message += $"^({daysOfWeak[0]}|{daysOfWeak[1]}|{daysOfWeak[2]}|{daysOfWeak[3]}|{daysOfWeak[4]}|{daysOfWeak[5]}|{daysOfWeak[6]}) In {name}: {regex} °C now. ({description[0]}|{description[1]}|{description[2]}|{description[3]})$\n";
+            }
+
+            //Act
+            var response = await _weatherService.GetForecastAsync(name, days);
+
+            // Assert
+            Assert.False(response.IsError);
+            Assert.Matches(message, response.Message);
+        }
+
+
+
         [Fact]
         public async Task GetWeatherAsync_ReceivedIncorrectWeather_IsErrorTrue()
         {

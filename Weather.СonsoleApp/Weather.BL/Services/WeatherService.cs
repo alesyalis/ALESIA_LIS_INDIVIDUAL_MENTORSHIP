@@ -72,7 +72,7 @@ namespace Weather.BL.Services
 
                 var weatherDTO = new ResponseMessage
                 {
-                    Message = $" {date} In {forecastResponse.CityName.Name}: {main.Temp} °C now. {dect}"
+                    Message = $"{date.DayOfWeek} In {forecastResponse.CityName.Name}: {main.Temp} °C now. {dect}"
                 };
                 responseMessage.Message += $"{weatherDTO.Message}\n";
             }
