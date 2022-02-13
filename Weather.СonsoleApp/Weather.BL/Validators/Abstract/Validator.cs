@@ -16,7 +16,7 @@ namespace Weather.BL.Validators.Abstract
         {
             ValidateCityByName(name);
 
-            if (days == 0)
+            if (days <= 0)
             {
                 throw new ValidationException("Input number of days is required\n");
             }
