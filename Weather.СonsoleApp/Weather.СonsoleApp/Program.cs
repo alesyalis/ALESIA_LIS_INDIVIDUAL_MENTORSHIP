@@ -10,6 +10,7 @@ using Weather.BL.Services.Abstract;
 using Weather.СonsoleApp.Commands;
 using AppConfiguration.Interface;
 using System.Collections.Generic;
+using Weather.BL.Exceptions;
 
 namespace Weather.СonsoleApp
 {
@@ -26,9 +27,9 @@ namespace Weather.СonsoleApp
 
             _weatherService = kernel.Get<IWeatherService>();
 
-            ICommand getWeather = new GetWeatherCommand(_weatherService);
-            ICommand getForecast = new GetForecastCommand(_weatherService);
-            ICommand exit = new ExitCommand();
+            var getWeather = new GetWeatherCommand(_weatherService);
+            var getForecast = new GetForecastCommand(_weatherService);
+            var exit = new ExitCommand();
 
             var listCommand = new List<ICommand>()
             {
@@ -48,6 +49,10 @@ namespace Weather.СonsoleApp
                     int number = int.Parse(Console.ReadLine());
                  
                     await listCommand[number].Execute();
+                }
+                catch (ValidationException ex)
+                {
+                    Console.WriteLine(ex.Message);
                 }
                 catch (Exception)
                 {
