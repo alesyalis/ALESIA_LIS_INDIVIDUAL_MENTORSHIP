@@ -120,10 +120,8 @@ namespace Weather.Tests.Service
             };
             var message = "";
 
-            foreach (var item in weather.List)
-            {
-                message += $"{date} In {weather.CityName.Name}: {main.Temp} °C now. {main.Description}\n";
-            }
+            weather.List.ForEach(x => message += string.Join(",", $"{date} In {weather.CityName.Name}" +
+                $": {x.Main.Temp} °C now. {main.Description}\n"));
 
             _weatherRepositoryMock.Setup(x => x.GetForecastAsync(cityName, days)).ReturnsAsync(weather);
 
