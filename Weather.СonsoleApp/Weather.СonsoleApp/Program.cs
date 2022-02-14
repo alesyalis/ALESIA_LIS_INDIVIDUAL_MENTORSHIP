@@ -28,10 +28,12 @@ namespace Weather.СonsoleApp
 
             ICommand getWeather = new GetWeatherCommand(_weatherService);
             ICommand getForecast = new GetForecastCommand(_weatherService);
+            ICommand exit = new ExitCommand();
 
-            var listCommand = new List<ICommand>();
-            listCommand.Add(getWeather);
-            listCommand.Add(getForecast);
+            var listCommand = new List<ICommand>()
+            {
+                getWeather, getForecast, exit
+            };
 
             bool showMenu = true;
             while (showMenu)
@@ -42,14 +44,9 @@ namespace Weather.СonsoleApp
                     {
                         Console.WriteLine(command.Title);
                     }
-                    Console.WriteLine("\n 3 - Exit");
+
                     int number = int.Parse(Console.ReadLine());
-                    if (number == 3)
-                    {
-                        showMenu = false;
-                        return;
-                    }
-                    
+                 
                     await listCommand[number].Execute();
                 }
                 catch (Exception)
