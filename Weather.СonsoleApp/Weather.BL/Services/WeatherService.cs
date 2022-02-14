@@ -4,6 +4,7 @@ using Weather.BL.Services.Abstract;
 using Weather.BL.Validators.Abstract;
 using Weather.DataAccess.Models;
 using Weather.DataAccess.Repositories.Abstrdact;
+using System.Linq;
 
 namespace Weather.BL.Services
 {
@@ -64,19 +65,10 @@ namespace Weather.BL.Services
         private ResponseMessage GetForecastMessage(ForecastResponse forecastResponse)
         {
             var responseMessage = new ResponseMessage { };
-            foreach (var infoForecast in forecastResponse.List)
-            {
-                var main = infoForecast.Main;
-                var dect = GetForecastDescription(infoForecast);
-                var date = infoForecast.Date;
-
-                var weatherDTO = new ResponseMessage
-                {
-                    Message = $"{date.DayOfWeek} In {forecastResponse.CityName.Name}: {main.Temp} °C now. {dect}"
-                };
-                responseMessage.Message += $"{weatherDTO.Message}\n";
-            }
-
+           
+            forecastResponse.List.ForEach(x => responseMessage.Message += string.Join(",", $"{x.Date.DayOfWeek} In {forecastResponse.CityName.Name}" +
+                $": {x.Main.Temp} °C now. {GetForecastDescription(x)}\n"));
+          
             return responseMessage;
         }
 
