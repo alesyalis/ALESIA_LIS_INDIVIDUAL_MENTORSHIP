@@ -1,4 +1,5 @@
 ﻿using AppConfiguration.Interface;
+using System;
 using System.Threading.Tasks;
 using Weather.BL.Exceptions;
 using Weather.BL.Services;
@@ -18,7 +19,7 @@ namespace Weather.IntegrationTest.Service
         private readonly ConfigTest _configuration;
         private readonly ICommand _commandForecast;
         private readonly ICommand _commandWeather;
-       
+
 
 
         public WeatherServiceIntegrationTest()
@@ -57,18 +58,19 @@ namespace Weather.IntegrationTest.Service
             // Arrange
             var name = "Moscow";
             var days = 3;
-           
+
             var regex = @"(\w?)(.*?)\.| (\B\W)(.*?)\.";
 
             var description = new string[]
-           {
+            {
                 "Dress warmly.",
                 "It's fresh.",
                 "Good weather.",
                 "It's time to go to the beach."
-           };
+            };
+
             var message = "";
-           
+
             var daysOfWeak = new string[]
             {
                 "Monday",
@@ -79,6 +81,7 @@ namespace Weather.IntegrationTest.Service
                 "Saturday",
                 "Sunday"
             };
+
             for (var d = 0; d < days; d++)
             {
                 message += $"^({daysOfWeak[0]}|{daysOfWeak[1]}|{daysOfWeak[2]}|{daysOfWeak[3]}|{daysOfWeak[4]}|{daysOfWeak[5]}|{daysOfWeak[6]}) In {name}: {regex} °C now. ({description[0]}|{description[1]}|{description[2]}|{description[3]})$\n";
@@ -132,7 +135,6 @@ namespace Weather.IntegrationTest.Service
 
             //Act
             var response = await _weatherService.GetForecastAsync(name, days);
-
 
             // Assert
             Assert.Equal(message, response.Message);

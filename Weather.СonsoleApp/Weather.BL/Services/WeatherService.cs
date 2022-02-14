@@ -74,7 +74,6 @@ namespace Weather.BL.Services
         private string GetWeatherDescription(WeatherResponse weatherResponse)
         {
             var temperature = weatherResponse.Main.Temp;
-            var description = weatherResponse.Main.Description;
             return GetDescription(temperature);
         }
 
