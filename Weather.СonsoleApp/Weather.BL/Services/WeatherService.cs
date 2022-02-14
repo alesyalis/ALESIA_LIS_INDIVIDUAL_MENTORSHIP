@@ -64,10 +64,11 @@ namespace Weather.BL.Services
         private ResponseMessage GetForecastMessage(ForecastResponse forecastResponse)
         {
             var responseMessage = new ResponseMessage { };
-           
-            forecastResponse.List.ForEach(x => responseMessage.Message += string.Join(",", $"{x.Date.DayOfWeek} In {forecastResponse.CityName.Name}" +
+            var message = $"In {forecastResponse.CityName.Name} weather forecast: \n";
+
+           forecastResponse.List.ForEach(x => responseMessage.Message = message += string.Join(",", $"{x.Date.DayOfWeek}" +
                 $": {x.Main.Temp} °C now. {GetForecastDescription(x)}\n"));
-          
+
             return responseMessage;
         }
 

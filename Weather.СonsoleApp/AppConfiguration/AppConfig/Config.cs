@@ -14,6 +14,6 @@ namespace AppConfiguration.AppConfig
 
         public string UrlLocationCity { get { return ConfigurationManager.AppSettings["urlLocationCity"]; } }
 
-        
+        public string Days { get { return ConfigurationManager.AppSettings["days"]; }  }
     }
 }

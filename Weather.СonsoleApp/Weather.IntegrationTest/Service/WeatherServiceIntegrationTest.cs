@@ -126,7 +126,7 @@ namespace Weather.IntegrationTest.Service
         }
 
         [Fact]
-        public async Task GetForecastsync_ReceivedIncorrectWeather_IsErrorTrue()
+        public async Task GetForecastAsync_ReceivedIncorrectWeather_IsErrorTrue()
         {
             // Arrange
             var name = "qqqqqq";

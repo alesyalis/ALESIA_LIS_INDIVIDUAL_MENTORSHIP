@@ -10,6 +10,8 @@
 
         string ApiKey { get;  }
 
-        string UrlLocationCity { get; } 
+        string UrlLocationCity { get; }
+
+        string Days { get; } 
     }
 }
