@@ -42,7 +42,7 @@ namespace Weather.СonsoleApp
                 {
                     foreach (var command in listCommand)
                     {
-                        Console.WriteLine(command.Title);
+                        Console.WriteLine($"{listCommand.IndexOf(command)} - " + command.Title);
                     }
 
                     int number = int.Parse(Console.ReadLine());

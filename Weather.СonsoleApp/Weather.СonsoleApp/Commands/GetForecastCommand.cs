@@ -15,7 +15,7 @@ namespace Weather.СonsoleApp.Commands
             _weatherService = weatherService;
         }
 
-        public string Title => "Select - 1 : if you want to see the forecast for several days";
+        public string Title => "Show forecast for several days";
 
         public async Task Execute()
         {

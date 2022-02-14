@@ -15,7 +15,7 @@ namespace Weather.СonsoleApp.Commands
             _weatherService = weatherService;
         }
 
-        public string Title => "Select - 0 : if you want to see the current forecast";
+        public string Title => "Show current forecast";
 
         public async Task Execute()
         {

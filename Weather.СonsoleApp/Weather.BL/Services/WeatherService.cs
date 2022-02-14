@@ -4,7 +4,6 @@ using Weather.BL.Services.Abstract;
 using Weather.BL.Validators.Abstract;
 using Weather.DataAccess.Models;
 using Weather.DataAccess.Repositories.Abstrdact;
-using System.Linq;
 
 namespace Weather.BL.Services
 {

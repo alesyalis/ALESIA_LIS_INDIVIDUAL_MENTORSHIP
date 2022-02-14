@@ -6,7 +6,7 @@ namespace Weather.СonsoleApp.Commands
 {
     public class ExitCommand : ICommand
     {
-        public string Title => "Exist 2";
+        public string Title => "Exist";
 
         public Task Execute()
         {
