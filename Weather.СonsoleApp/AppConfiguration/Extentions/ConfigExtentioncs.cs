@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using AppConfiguration.AppConfig;
+using Microsoft.Extensions.Configuration;
 using System.Collections.Specialized;
 
 namespace AppConfiguration.Extentions
@@ -7,13 +8,21 @@ namespace AppConfiguration.Extentions
     {
         public static IConfigurationRoot GetConfigTest(this IConfigurationRoot configurationRoot)
         {
-            configurationRoot = new ConfigurationBuilder().AddJsonFile("appsettings.json")
+            IConfigurationRoot conf = new ConfigurationBuilder().AddJsonFile("appsettings.json")
                                                  .Build();
-            return configurationRoot;
+
+            return conf;
         }
-        public static NameValueCollection GetConfig(this NameValueCollection configurationRoot)
+        public static IConfig GetConfig(this IConfig configurationRoot)
         {
-            configurationRoot = System.Configuration.ConfigurationManager.AppSettings;
+            NameValueCollection conf = System.Configuration.ConfigurationManager.AppSettings;
+            configurationRoot.ApiKey = conf["apiKey"];
+            configurationRoot.UrlBase = conf["urlBase"];
+            configurationRoot.UrlWeather = conf["urlWeather"];
+            configurationRoot.UrlForecast = conf["urlForecast"];
+            configurationRoot.UrlLocationCity = conf["urlLocationCity"];
+            configurationRoot.Days = int.Parse(conf["days"]);
+
             return configurationRoot;
         }
     }

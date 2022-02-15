@@ -6,6 +6,7 @@ using System.Net.Http;
 using AppConfiguration.AppConfig;
 using System.Collections.Generic;
 using System.Linq;
+using AppConfiguration.Extentions;
 
 namespace Weather.DataAccess.Repositories
 {
@@ -18,7 +19,7 @@ namespace Weather.DataAccess.Repositories
         public WeatherRepository(IConfig configuration)
         {
             _httpClient = new HttpClient();
-            _configuration = configuration; 
+            _configuration = configuration.GetConfig();
         }
 
         public async Task<WeatherResponse> GetWeatherAsync(string cityName)
@@ -27,7 +28,7 @@ namespace Weather.DataAccess.Repositories
             var urlWeather = _configuration.UrlWeather;
             var key = _configuration.ApiKey;
             var responce = await _httpClient.GetAsync($"{urlBase}{urlWeather}={cityName}&units=metric&appid={key}");
-            var responceBody = await responce.Content.ReadAsStringAsync();  
+            var responceBody = await responce.Content.ReadAsStringAsync();
             var weatherResponсe = JsonConvert.DeserializeObject<WeatherResponse>(responceBody);
             return weatherResponсe;
         }

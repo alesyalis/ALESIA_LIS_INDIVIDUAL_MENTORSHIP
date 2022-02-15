@@ -5,56 +5,16 @@ namespace Weather.Tests
 {
     public class ConfigTest : IConfig
     {
-        public string UrlBase
-        {
-            get
-            {
-                return new ConfigurationBuilder().AddJsonFile("appsettings.json")
-                                                 .Build()["urlBase"];
-            }
-        }
-        public string UrlWeather
-        {
-            get
-            {
-                return new ConfigurationBuilder().AddJsonFile("appsettings.json")
-                                                 .Build()["urlWeather"];
-            }
-        }
+        public string UrlBase { get; set; } 
+        
+        public string UrlWeather { get; set; }  
 
-        public string ApiKey
-        {
-            get
-            {
-                return new ConfigurationBuilder().AddJsonFile("appsettings.json")
-                                                 .Build()["ApiKey"];
-            }
-        }
+        public string ApiKey { get; set; }  
 
-        public string UrlForecast
-        {
-            get
-            {
-                return new ConfigurationBuilder().AddJsonFile("appsettings.json")
-                                                 .Build()["urlForecast"];
-            }
-        }
+        public string UrlForecast { get; set; } 
 
-        public string UrlLocationCity
-        {
-            get
-            {
-                return new ConfigurationBuilder().AddJsonFile("appsettings.json")
-                                                 .Build()["urlLocationCity"];
-            }
-        }
-        public int Days
-        {
-            get 
-            { 
-                return  int.Parse(new ConfigurationBuilder().AddJsonFile("appsettings.json")
-                                                 .Build()["days"]); 
-            }
-        }
+        public string UrlLocationCity { get; set; } 
+
+        public int Days { get; set; }   
     }
 }

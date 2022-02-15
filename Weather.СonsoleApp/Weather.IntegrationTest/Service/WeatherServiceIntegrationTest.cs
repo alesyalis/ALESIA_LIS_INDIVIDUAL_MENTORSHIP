@@ -1,5 +1,4 @@
 ﻿using AppConfiguration.Interface;
-using System;
 using System.Threading.Tasks;
 using Weather.BL.Exceptions;
 using Weather.BL.Services;
