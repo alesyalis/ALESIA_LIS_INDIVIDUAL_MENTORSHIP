@@ -118,9 +118,9 @@ namespace Weather.Tests.Service
                 CityName = new CityForecast { Name = cityName },
                 List = list
             };
-            var message = "";
-
-            weather.List.ForEach(x => message += string.Join(",", $"{date} In {weather.CityName.Name}" +
+          
+            var message = $"In {weather.CityName.Name} weather forecast: \n";
+            weather.List.ForEach(x => message += string.Join(",", $"{date}" +
                 $": {x.Main.Temp} °C now. {main.Description}\n"));
 
             _weatherRepositoryMock.Setup(x => x.GetForecastAsync(cityName, days)).ReturnsAsync(weather);

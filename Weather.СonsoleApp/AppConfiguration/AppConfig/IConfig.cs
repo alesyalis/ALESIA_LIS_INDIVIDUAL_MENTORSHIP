@@ -12,6 +12,6 @@
 
         string UrlLocationCity { get; }
 
-        string Days { get; } 
+        int Days { get; } 
     }
 }

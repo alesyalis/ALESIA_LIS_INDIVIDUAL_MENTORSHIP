@@ -8,11 +8,13 @@ namespace Weather.Tests.Service
     public class ValidatorTest
     {
         private IValidator _validator;
+        private ConfigTest _configuration;
 
         [SetUp]
         public void Setup()
         {
-            _validator = new Validator();
+            _configuration = new ConfigTest();
+            _validator = new Validator(_configuration);
         }
 
         [TestCase("")]

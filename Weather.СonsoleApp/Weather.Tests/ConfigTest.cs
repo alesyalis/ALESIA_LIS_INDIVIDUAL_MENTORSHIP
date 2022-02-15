@@ -1,7 +1,7 @@
 ﻿using AppConfiguration.AppConfig;
 using Microsoft.Extensions.Configuration;
 
-namespace Weather.IntegrationTest
+namespace Weather.Tests
 {
     public class ConfigTest : IConfig
     {

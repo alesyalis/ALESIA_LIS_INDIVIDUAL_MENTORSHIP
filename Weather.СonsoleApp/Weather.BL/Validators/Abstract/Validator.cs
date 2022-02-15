@@ -22,7 +22,7 @@ namespace Weather.BL.Validators.Abstract
         {
             ValidateCityByName(name);
 
-            if (days <= int.Parse(_configuration.Days))
+            if (days <= _configuration.Days)
             {
                 throw new ValidationException("Input number of days is required\n");
             }

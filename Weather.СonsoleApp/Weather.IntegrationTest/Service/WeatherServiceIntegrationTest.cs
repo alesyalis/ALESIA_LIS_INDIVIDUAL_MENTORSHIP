@@ -26,7 +26,7 @@ namespace Weather.IntegrationTest.Service
         {
             _configuration = new ConfigTest();
             _weatherRepository = new WeatherRepository(_configuration);
-            _validator = new Validator();
+            _validator = new Validator(_configuration);
             _weatherService = new WeatherService(_weatherRepository, _validator);
             _commandForecast = new GetForecastCommand(_weatherService);
             _commandWeather = new GetWeatherCommand(_weatherService);
@@ -69,7 +69,7 @@ namespace Weather.IntegrationTest.Service
                 "It's time to go to the beach."
             };
 
-            var message = "";
+            //var message = "";
 
             var daysOfWeak = new string[]
             {
@@ -82,10 +82,16 @@ namespace Weather.IntegrationTest.Service
                 "Sunday"
             };
 
-            for (var d = 0; d < days; d++)
+            var mes = $"In {name} weather forecast: \n";
+            var temp = "";
+
+            for (var d = 1; d <= days; d++)
             {
-                message += $"^({daysOfWeak[0]}|{daysOfWeak[1]}|{daysOfWeak[2]}|{daysOfWeak[3]}|{daysOfWeak[4]}|{daysOfWeak[5]}|{daysOfWeak[6]}) In {name}: {regex} °C now. ({description[0]}|{description[1]}|{description[2]}|{description[3]})$\n";
+                
+                temp += string.Join(",", $"({daysOfWeak[0]}|{daysOfWeak[1]}|{daysOfWeak[2]}|{daysOfWeak[3]}|{daysOfWeak[4]}|{daysOfWeak[5]}|{daysOfWeak[6]})" +
+                $": {regex} °C now. ({description[0]}|{description[1]}|{description[2]}|{description[3]})\n");
             }
+            var message = mes + temp;
 
             //Act
             var response = await _weatherService.GetForecastAsync(name, days);
