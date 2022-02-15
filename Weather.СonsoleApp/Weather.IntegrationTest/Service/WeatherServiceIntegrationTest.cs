@@ -69,27 +69,14 @@ namespace Weather.IntegrationTest.Service
                 "It's time to go to the beach."
             };
 
-            //var message = "";
-
-            var daysOfWeak = new string[]
-            {
-                "Monday",
-                "Tuesday",
-                "Wednesday",
-                "Thursday",
-                "Friday",
-                "Saturday",
-                "Sunday"
-            };
-
-            var mes = $"In {name} weather forecast: \n";
+            var mes = $"{name} weather forecast: \n";
             var temp = "";
-
+            var day = 1;
             for (var d = 1; d <= days; d++)
             {
                 
-                temp += string.Join(",", $"({daysOfWeak[0]}|{daysOfWeak[1]}|{daysOfWeak[2]}|{daysOfWeak[3]}|{daysOfWeak[4]}|{daysOfWeak[5]}|{daysOfWeak[6]})" +
-                $": {regex} °C now. ({description[0]}|{description[1]}|{description[2]}|{description[3]})\n");
+                temp += string.Join(",", $"Day {day++}" +
+                $": {regex}. ({description[0]}|{description[1]}|{description[2]}|{description[3]})\n");
             }
             var message = mes + temp;
 

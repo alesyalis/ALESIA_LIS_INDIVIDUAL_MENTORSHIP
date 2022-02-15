@@ -1,60 +1,35 @@
 ﻿using AppConfiguration.AppConfig;
+using AppConfiguration.Extentions;
 using Microsoft.Extensions.Configuration;
 
 namespace Weather.IntegrationTest
 {
     public class ConfigTest : IConfig
     {
-        public string UrlBase
-        {
-            get
-            {
-                return new ConfigurationBuilder().AddJsonFile("appsettings.json")
-                                                 .Build()["urlBase"];
-            }
-        }
-        public string UrlWeather
-        {
-            get
-            {
-                return new ConfigurationBuilder().AddJsonFile("appsettings.json")
-                                                 .Build()["urlWeather"];
-            }
-        }
+        private readonly IConfigurationRoot _configuration;
 
-        public string ApiKey
-        {
-            get
-            {
-                return new ConfigurationBuilder().AddJsonFile("appsettings.json")
-                                                 .Build()["ApiKey"];
-            }
-        }
+        public string UrlBase { get; }
 
-        public string UrlForecast
-        {
-            get
-            {
-                return new ConfigurationBuilder().AddJsonFile("appsettings.json")
-                                                 .Build()["urlForecast"];
-            }
-        }
+        public string UrlWeather { get; }
 
-        public string UrlLocationCity
+        public string ApiKey { get; }
+
+        public string UrlForecast { get; }
+
+        public string UrlLocationCity { get; }
+
+        public int Days { get; }
+
+        public ConfigTest()
         {
-            get
-            {
-                return new ConfigurationBuilder().AddJsonFile("appsettings.json")
-                                                 .Build()["urlLocationCity"];
-            }
-        }
-        public int Days
-        {
-            get 
-            { 
-                return  int.Parse(new ConfigurationBuilder().AddJsonFile("appsettings.json")
-                                                 .Build()["days"]); 
-            }
+            var conf = _configuration.GetConfigTest();
+
+            ApiKey = conf["ApiKey"];
+            UrlBase = conf["urlBase"];
+            UrlWeather = conf["urlWeather"];
+            UrlForecast = conf["urlForecast"];
+            UrlLocationCity = conf["urlLocationCity"];
+            Days = int.Parse(conf["days"]);
         }
     }
 }

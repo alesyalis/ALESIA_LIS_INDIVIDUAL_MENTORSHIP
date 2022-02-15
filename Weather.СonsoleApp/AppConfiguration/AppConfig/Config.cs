@@ -1,19 +1,32 @@
-﻿using System.Configuration;
+﻿using AppConfiguration.Extentions;
+using System.Collections.Specialized;
 
 namespace AppConfiguration.AppConfig
 {
     public class Config : IConfig
     {
-        public string UrlBase { get { return ConfigurationManager.AppSettings["urlBase"]; } }
+        private readonly NameValueCollection _configuration;
+        public string UrlBase { get; }
 
-        public string UrlWeather { get { return ConfigurationManager.AppSettings["urlWeather"]; } }
+        public string UrlWeather { get; }
 
-        public string UrlForecast { get { return ConfigurationManager.AppSettings["urlForecast"]; } }
+        public string UrlForecast { get; }
 
-        public string ApiKey { get { return ConfigurationManager.AppSettings["apiKey"]; } }
+        public string ApiKey { get; }
 
-        public string UrlLocationCity { get { return ConfigurationManager.AppSettings["urlLocationCity"]; } }
+        public string UrlLocationCity { get; }
 
-        public int Days { get { return int.Parse(ConfigurationManager.AppSettings["days"]); }  }
+        public int Days { get; }
+        public Config()
+        {
+            var conf = _configuration.GetConfig();
+
+            ApiKey = conf["apiKey"];
+            UrlBase = conf["urlBase"];
+            UrlWeather = conf["urlWeather"];
+            UrlForecast = conf["urlForecast"];
+            UrlLocationCity = conf["urlLocationCity"];
+            Days = int.Parse(conf["days"]);
+        }
     }
 }

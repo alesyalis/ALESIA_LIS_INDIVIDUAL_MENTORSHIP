@@ -105,8 +105,8 @@ namespace Weather.Tests.Service
         }
 
 
-        [TestCase("London", 3, 10, "It's fresh.", "Monday")]
-        public async Task GetForecastAsync_CorrectWeatherIsReceived_IsErrorFalseAndMessageIsGenerated(string cityName, int days, double temp, string description, string date)
+        [TestCase("London", 3, 10, "It's fresh.")]
+        public async Task GetForecastAsync_CorrectWeatherIsReceived_IsErrorFalseAndMessageIsGenerated(string cityName, int days, double temp, string description)
         {
             // Arrange
             var main = new ForecastDescription() { Temp = temp, Description = description };
@@ -118,10 +118,12 @@ namespace Weather.Tests.Service
                 CityName = new CityForecast { Name = cityName },
                 List = list
             };
-          
-            var message = $"In {weather.CityName.Name} weather forecast: \n";
-            weather.List.ForEach(x => message += string.Join(",", $"{date}" +
-                $": {x.Main.Temp} °C now. {main.Description}\n"));
+            var date = 1;
+
+
+            var message = $"{weather.CityName.Name} weather forecast: \n";
+            weather.List.ForEach(x => message += string.Join(",", $"Day {date++}" +
+                $": {x.Main.Temp}. {main.Description}\n"));
 
             _weatherRepositoryMock.Setup(x => x.GetForecastAsync(cityName, days)).ReturnsAsync(weather);
 

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Weather.BL.DTOs;
 using Weather.BL.Services.Abstract;
 using Weather.BL.Validators.Abstract;
@@ -32,7 +33,6 @@ namespace Weather.BL.Services
             var description = GetWeatherDescription(weather);
 
             return GetWeatherResponseMessage(weather, description);
-
         }
 
         public async Task<ResponseMessage> GetForecastAsync(string cityName, int days)
@@ -47,7 +47,7 @@ namespace Weather.BL.Services
                 return new ResponseMessage { Message = messageForecast };
             }
             var responseMessage = GetForecastMessage(weatherForecast);
-            
+
             return responseMessage;
         }
 
@@ -58,16 +58,19 @@ namespace Weather.BL.Services
                 IsError = false,
                 Message = $"In {weatherResponse.Name}: {weatherResponse.Main.Temp} °C now. {description} "
             };
+
             return weatherDTO;
         }
 
         private ResponseMessage GetForecastMessage(ForecastResponse forecastResponse)
         {
             var responseMessage = new ResponseMessage { };
-            var message = $"In {forecastResponse.CityName.Name} weather forecast: \n";
+            var temp = forecastResponse.List.First();
+            var message = $"{forecastResponse.CityName.Name} weather forecast: \n";
+            var days = 1;
 
-           forecastResponse.List.ForEach(x => responseMessage.Message = message += string.Join(",", $"{x.Date.DayOfWeek}" +
-                $": {x.Main.Temp} °C now. {GetForecastDescription(x)}\n"));
+            forecastResponse.List.ForEach(x => responseMessage.Message = message += string.Join(",", $"Day {days++}" +
+             $": {x.Main.Temp}. {GetForecastDescription(x)}\n"));
 
             return responseMessage;
         }
@@ -82,7 +85,6 @@ namespace Weather.BL.Services
         {
             var forecastDescription = infoForecast.Main;
             var temperature = forecastDescription.Temp;
-            var description = forecastDescription.Description;
             return GetDescription(temperature);
         }
 
