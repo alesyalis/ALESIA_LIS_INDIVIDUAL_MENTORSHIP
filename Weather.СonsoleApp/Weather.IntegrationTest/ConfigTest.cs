@@ -1,26 +1,35 @@
 ﻿using AppConfiguration.AppConfig;
+using AppConfiguration.Extentions;
 using Microsoft.Extensions.Configuration;
 
 namespace Weather.IntegrationTest
 {
     public class ConfigTest : IConfig
     {
-        public string Url
-        {
-            get
-            {
-                return new ConfigurationBuilder().AddJsonFile("appsettings.json")
-                                                 .Build()["url"];
-            }
-        }
+        private readonly IConfigurationRoot _configuration;
 
-        public string ApiKey
+        public string UrlBase { get; set; }
+
+        public string UrlWeather { get; set; }
+
+        public string ApiKey { get; set; }
+
+        public string UrlForecast { get; set; }
+
+        public string UrlLocationCity { get; set; }
+
+        public int Days { get; set; }
+
+        public ConfigTest()
         {
-            get
-            {
-                return new ConfigurationBuilder().AddJsonFile("appsettings.json")
-                                                 .Build()["ApiKey"];
-            }
+            var conf = _configuration.GetPopulateConfigFromAppSetings();
+
+            ApiKey = conf["ApiKey"];
+            UrlBase = conf["urlBase"];
+            UrlWeather = conf["urlWeather"];
+            UrlForecast = conf["urlForecast"];
+            UrlLocationCity = conf["urlLocationCity"];
+            Days = int.Parse(conf["days"]);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Weather.BL.DTOs;
 using Weather.BL.Services.Abstract;
 using Weather.BL.Validators.Abstract;
@@ -15,47 +16,88 @@ namespace Weather.BL.Services
         public WeatherService(IWeatherRepository weatherRepository, IValidator validator)
         {
             _weatherRepository = weatherRepository;
-            _validator = validator; 
+            _validator = validator;
         }
-      
-        public async Task<WeatherResponseMessage> GetWeatherAsync(string cityName)
+
+        public async Task<ResponseMessage> GetWeatherAsync(string cityName)
         {
             _validator.ValidateCityByName(cityName);
 
             var weather = await _weatherRepository.GetWeatherAsync(cityName);
-          
+
             if (weather.Main == null)
             {
-                return new WeatherResponseMessage() { IsError = true, Message = $"{cityName} not found" };
+                return new ResponseMessage() { IsError = true, Message = $"{cityName} not found" };
             }
 
             var description = GetWeatherDescription(weather);
-            
-            return MapToWeatherResponseDTO(weather, description);
 
+            return GetWeatherResponseMessage(weather, description);
         }
-        private WeatherResponseMessage MapToWeatherResponseDTO(WeatherResponse weatherResponse, string description)
+
+        public async Task<ResponseMessage> GetForecastAsync(string cityName, int days)
         {
-            var weatherDTO = new WeatherResponseMessage
+            _validator.ValidateForecast(cityName, days);
+
+            var weatherForecast = await _weatherRepository.GetForecastAsync(cityName, days);
+
+            if (weatherForecast.List == null)
+            {
+                var messageForecast = $"{cityName} not found";
+                return new ResponseMessage { Message = messageForecast };
+            }
+            var responseMessage = GetForecastMessage(weatherForecast);
+
+            return responseMessage;
+        }
+
+        private ResponseMessage GetWeatherResponseMessage(WeatherResponse weatherResponse, string description)
+        {
+            var weatherDTO = new ResponseMessage
             {
                 IsError = false,
                 Message = $"In {weatherResponse.Name}: {weatherResponse.Main.Temp} °C now. {description} "
             };
+
             return weatherDTO;
+        }
+
+        private ResponseMessage GetForecastMessage(ForecastResponse forecastResponse)
+        {
+            var responseMessage = new ResponseMessage { };
+            var temp = forecastResponse.List.First();
+            var message = $"{forecastResponse.CityName.Name} weather forecast: \n";
+            var days = 1;
+
+            forecastResponse.List.ForEach(x => responseMessage.Message = message += string.Join(",", $"Day {days++}" +
+             $": {x.Main.Temp}. {GetForecastDescription(x)}\n"));
+
+            return responseMessage;
         }
 
         private string GetWeatherDescription(WeatherResponse weatherResponse)
         {
             var temperature = weatherResponse.Main.Temp;
-            var description = weatherResponse.Main.Description; 
+            return GetDescription(temperature);
+        }
+
+        private string GetForecastDescription(InfoForecast infoForecast)
+        {
+            var forecastDescription = infoForecast.Main;
+            var temperature = forecastDescription.Temp;
+            return GetDescription(temperature);
+        }
+
+        private string GetDescription(double temperature)
+        {
             if (temperature < 0)
-                return description = "Dress warmly.";
+                return "Dress warmly.";
             if (temperature >= 0 && temperature <= 20)
-                return description = "It's fresh.";
+                return "It's fresh.";
             if (temperature > 20 && temperature <= 30)
-                return description = "Good weather!";
-            else 
-                return description = "It's time to go to the beach";
+                return "Good weather!";
+            else
+                return "It's time to go to the beach";
         }
     }
 }

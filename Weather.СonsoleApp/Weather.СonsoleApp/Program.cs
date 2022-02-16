@@ -7,6 +7,9 @@ using System.Reflection;
 using System.Web.Mvc;
 using Ninject.Web.Mvc;
 using Weather.BL.Services.Abstract;
+using Weather.СonsoleApp.Commands;
+using AppConfiguration.Interface;
+using System.Collections.Generic;
 using Weather.BL.Exceptions;
 
 namespace Weather.СonsoleApp
@@ -24,47 +27,38 @@ namespace Weather.СonsoleApp
 
             _weatherService = kernel.Get<IWeatherService>();
 
+            var getWeather = new GetWeatherCommand(_weatherService);
+            var getForecast = new GetForecastCommand(_weatherService);
+            var exit = new ExitCommand();
+
+            var listCommand = new List<ICommand>()
+            {
+                exit, getWeather, getForecast, 
+            };
+
             bool showMenu = true;
             while (showMenu)
             {
-                showMenu = await MainMenu();
-            }
-        }
+                try
+                {
+                    foreach (var command in listCommand)
+                    {
+                        Console.WriteLine($"{listCommand.IndexOf(command)} - " + command.Title);
+                    }
 
-        private static async Task<bool> MainMenu()
-        {
-            Console.WriteLine("Select an action:");
-            Console.WriteLine("If you want to know the weather in the city, enter 1");
-            Console.WriteLine("If you want to close the application, enter 2");
-
-            switch (Console.ReadLine())
-            {
-                case "1":
-                    await GetWeatherByCityNameAsync();
-                    return true;
-                case "2":
-                    return false;
-                default:
-                    return true;
-            }
-        }
-
-        private static async Task GetWeatherByCityNameAsync()
-        {
-            try
-            {
-                Console.WriteLine("Enter the name of the city");
-                var cityName = Console.ReadLine();
-                var weather = await _weatherService.GetWeatherAsync(cityName);
-                Console.WriteLine(weather.Message);
-            }
-            catch (ValidationException ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Unhand exeption :" + ex.Message);
+                    int number = int.Parse(Console.ReadLine());
+                 
+                    await listCommand[number].Execute();
+                }
+                catch (ValidationException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Press any key to exit!");
+                    Console.ReadKey();
+                }
             }
         }
     }
