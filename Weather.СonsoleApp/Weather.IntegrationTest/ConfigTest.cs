@@ -22,7 +22,7 @@ namespace Weather.IntegrationTest
 
         public ConfigTest()
         {
-            var conf = _configuration.GetConfigTest();
+            var conf = _configuration.GetPopulateConfigFromAppSetings();
 
             ApiKey = conf["ApiKey"];
             UrlBase = conf["urlBase"];

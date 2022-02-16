@@ -4,16 +4,18 @@ using System.Collections.Specialized;
 
 namespace AppConfiguration.Extentions
 {
-    public static class ConfigExtentioncs
+    public static class ConfigurationExtension
     {
-        public static IConfigurationRoot GetConfigTest(this IConfigurationRoot configurationRoot)
+
+        public static IConfigurationRoot GetPopulateConfigFromAppSetings(this IConfigurationRoot configurationRoot)
         {
             IConfigurationRoot conf = new ConfigurationBuilder().AddJsonFile("appsettings.json")
                                                  .Build();
 
             return conf;
         }
-        public static Config GetConfig(this Config configurationRoot)
+
+        public static Config GetPopulateConfigFromAppConfig(this Config configurationRoot)
         {
             NameValueCollection conf = System.Configuration.ConfigurationManager.AppSettings;
             configurationRoot.ApiKey = conf["apiKey"];

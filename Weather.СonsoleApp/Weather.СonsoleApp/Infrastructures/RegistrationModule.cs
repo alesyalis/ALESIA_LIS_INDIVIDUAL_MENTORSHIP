@@ -16,7 +16,7 @@ namespace Weather.СonsoleApp.Infrastructures
             Bind<IConfig>().ToMethod(ctx =>
             {
                 var config = new Config();
-                config.GetConfig();
+                config.GetPopulateConfigFromAppConfig();
                 return config;
             }).InSingletonScope();
         }
