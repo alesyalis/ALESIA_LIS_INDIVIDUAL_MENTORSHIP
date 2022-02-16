@@ -12,11 +12,10 @@ namespace Weather.СonsoleApp.Infrastructures
         public override void Load()
         {
             Bind<IWeatherService>().To<WeatherService>();
-            // Bind<IConfig>().To<Config>().InSingletonScope();
             Bind<IConfig>().ToMethod(ctx =>
             {
                 var config = new Config();
-                config.GetPopulateConfigFromAppConfig();
+                config.PopulateConfigFromAppConfig();
                 return config;
             }).InSingletonScope();
         }
