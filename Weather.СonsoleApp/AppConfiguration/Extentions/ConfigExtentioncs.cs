@@ -13,7 +13,7 @@ namespace AppConfiguration.Extentions
 
             return conf;
         }
-        public static IConfig GetConfig(this IConfig configurationRoot)
+        public static Config GetConfig(this Config configurationRoot)
         {
             NameValueCollection conf = System.Configuration.ConfigurationManager.AppSettings;
             configurationRoot.ApiKey = conf["apiKey"];

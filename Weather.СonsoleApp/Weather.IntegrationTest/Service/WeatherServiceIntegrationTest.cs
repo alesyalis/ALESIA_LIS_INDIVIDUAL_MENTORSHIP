@@ -20,7 +20,6 @@ namespace Weather.IntegrationTest.Service
         private readonly ICommand _commandWeather;
 
 
-
         public WeatherServiceIntegrationTest()
         {
             _configuration = new ConfigTest();
@@ -87,8 +86,6 @@ namespace Weather.IntegrationTest.Service
             Assert.Matches(message, response.Message);
         }
 
-
-
         [Fact]
         public async Task GetWeatherAsync_ReceivedIncorrectWeather_IsErrorTrue()
         {
@@ -145,7 +142,7 @@ namespace Weather.IntegrationTest.Service
             var result = Assert.Throws<ValidationException>(() => _validator.ValidateForecast(name, days));
             Assert.Equal(message, result.Message);
         }
-
+        
         [Fact]
         public void GetForecastAsync_ValidatorThrowsIsExeptionIfDaysNull_ReceivedError()
         {

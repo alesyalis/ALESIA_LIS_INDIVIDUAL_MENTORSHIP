@@ -33,7 +33,7 @@ namespace Weather.СonsoleApp
 
             var listCommand = new List<ICommand>()
             {
-                getWeather, getForecast, exit
+                exit, getWeather, getForecast, 
             };
 
             bool showMenu = true;

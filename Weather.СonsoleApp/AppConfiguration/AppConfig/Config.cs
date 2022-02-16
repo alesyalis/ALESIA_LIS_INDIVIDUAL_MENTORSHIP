@@ -1,7 +1,4 @@
-﻿using AppConfiguration.Extentions;
-using System.Collections.Specialized;
-
-namespace AppConfiguration.AppConfig
+﻿namespace AppConfiguration.AppConfig
 {
     public class Config : IConfig
     {

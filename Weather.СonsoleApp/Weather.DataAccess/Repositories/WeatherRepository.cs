@@ -6,7 +6,6 @@ using System.Net.Http;
 using AppConfiguration.AppConfig;
 using System.Collections.Generic;
 using System.Linq;
-using AppConfiguration.Extentions;
 
 namespace Weather.DataAccess.Repositories
 {
@@ -19,7 +18,7 @@ namespace Weather.DataAccess.Repositories
         public WeatherRepository(IConfig configuration)
         {
             _httpClient = new HttpClient();
-            _configuration = configuration.GetConfig();
+            _configuration = configuration;
         }
 
         public async Task<WeatherResponse> GetWeatherAsync(string cityName)
