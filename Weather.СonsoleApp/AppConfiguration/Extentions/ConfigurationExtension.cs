@@ -7,7 +7,7 @@ namespace AppConfiguration.Extentions
     public static class ConfigurationExtension
     {
 
-        public static IConfigurationRoot GetPopulateConfigFromAppSetings(this IConfigurationRoot configurationRoot)
+        public static IConfigurationRoot PopulateConfigFromAppSetings(this IConfigurationRoot configurationRoot)
         {
             IConfigurationRoot conf = new ConfigurationBuilder().AddJsonFile("appsettings.json")
                                                  .Build();
@@ -15,7 +15,7 @@ namespace AppConfiguration.Extentions
             return conf;
         }
 
-        public static Config GetPopulateConfigFromAppConfig(this Config configurationRoot)
+        public static Config PopulateConfigFromAppConfig(this Config configurationRoot)
         {
             NameValueCollection conf = System.Configuration.ConfigurationManager.AppSettings;
             configurationRoot.ApiKey = conf["apiKey"];
