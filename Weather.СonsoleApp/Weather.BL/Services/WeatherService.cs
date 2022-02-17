@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Weather.BL.DTOs;
 using Weather.BL.Services.Abstract;
@@ -33,6 +35,43 @@ namespace Weather.BL.Services
             var description = GetWeatherDescription(weather);
 
             return GetWeatherResponseMessage(weather, description);
+        }
+
+        public async Task<ResponseMessage> GetMaxWeatherAsync(List<string> cityName)
+        {
+            foreach (var city in cityName)
+            {
+                _validator.ValidateCityByName(city);
+            }
+
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+
+            var listWeather = await _weatherRepository.GetListWeatherAsync(cityName);
+
+            stopWatch.Stop();
+            listWeather.ForEach(x => x.LeadTime = stopWatch.ElapsedMilliseconds);
+
+            foreach (var weather in listWeather)
+            {
+                if (weather.Main == null)
+                {
+                    return new ResponseMessage() { IsError = true, Message = $"{cityName} not found.Timer: {weather.LeadTime} ms." };
+                }
+            }
+            return GetMaxWeatherResponseMessage(listWeather);
+        }
+
+        private ResponseMessage GetMaxWeatherResponseMessage(List<WeatherResponse> listWeatherResponse)
+        {
+            var maxWeather = listWeatherResponse.FirstOrDefault(x => x.Main.Temp == listWeatherResponse.Max(t => t.Main.Temp));
+            var weatherDTO = new ResponseMessage
+            {
+                IsError = false,
+                Message = $"In {maxWeather.Name}: {maxWeather.Main.Temp} °C now.Timer: {maxWeather.LeadTime} ms. "
+            };
+
+            return weatherDTO;
         }
 
         public async Task<ResponseMessage> GetForecastAsync(string cityName, int days)

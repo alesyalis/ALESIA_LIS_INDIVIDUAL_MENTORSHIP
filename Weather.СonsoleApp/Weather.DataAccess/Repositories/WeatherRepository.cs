@@ -56,5 +56,17 @@ namespace Weather.DataAccess.Repositories
 
             return locationResponсe;
         }
+
+        public async Task<List<WeatherResponse>> GetListWeatherAsync(List<string> cityName)
+        {
+            var tasks = cityName.Select(async city =>
+            {
+                var listWeatherResponse = await GetWeatherAsync(city);
+                return listWeatherResponse;
+            }).ToList();
+
+            var results = await Task.WhenAll(tasks);
+            return results.ToList();
+        }
     }
 }
