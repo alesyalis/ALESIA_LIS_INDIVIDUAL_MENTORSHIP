@@ -16,16 +16,19 @@ namespace Weather.Tests.Service
         private WeatherService _weatherService;
         private Mock<IWeatherRepository> _weatherRepositoryMock;
         private Mock<IValidator> _validatorMock;
+        private ConfigTest _configuration;
 
         [SetUp]
         public void Setup()
         {
             _weatherRepositoryMock = new Mock<IWeatherRepository>();
             _validatorMock = new Mock<IValidator>();
+            _configuration = new ConfigTest();
 
             _weatherService = new WeatherService(
                 _weatherRepositoryMock.Object,
-                _validatorMock.Object);
+                _validatorMock.Object,
+                _configuration);
         }
 
         [TestCase("Minsk", -1, "Dress warmly.")]

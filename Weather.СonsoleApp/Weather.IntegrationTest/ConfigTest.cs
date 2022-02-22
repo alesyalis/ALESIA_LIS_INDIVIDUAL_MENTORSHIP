@@ -32,7 +32,7 @@ namespace Weather.IntegrationTest
             UrlForecast = conf["urlForecast"];
             UrlLocationCity = conf["urlLocationCity"];
             Days = int.Parse(conf["days"]);
-            IsDebug = bool.Parse(conf["IsDebug"]);
+            IsDebug = bool.Parse(conf["isDebug"]);
         }
     }
 }

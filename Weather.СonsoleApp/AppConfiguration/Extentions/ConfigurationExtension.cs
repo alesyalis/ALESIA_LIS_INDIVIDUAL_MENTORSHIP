@@ -24,7 +24,7 @@ namespace AppConfiguration.Extentions
             configurationRoot.UrlForecast = conf["urlForecast"];
             configurationRoot.UrlLocationCity = conf["urlLocationCity"];
             configurationRoot.Days = int.Parse(conf["days"]);
-            configurationRoot.IsDebug = bool.Parse(conf["IsDebug"]);
+            configurationRoot.IsDebug = bool.Parse(conf["isDebug"]);
 
             return configurationRoot;
         }

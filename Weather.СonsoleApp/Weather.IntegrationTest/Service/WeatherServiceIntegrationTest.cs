@@ -72,7 +72,6 @@ namespace Weather.IntegrationTest.Service
             var day = 1;
             for (var d = 1; d <= days; d++)
             {
-                
                 temp += string.Join(",", $"Day {day++}" +
                 $": {regex}. ({description[0]}|{description[1]}|{description[2]}|{description[3]})\n");
             }
@@ -142,7 +141,7 @@ namespace Weather.IntegrationTest.Service
             var result = Assert.Throws<ValidationException>(() => _validator.ValidateForecast(name, days));
             Assert.Equal(message, result.Message);
         }
-        
+
         [Fact]
         public void GetForecastAsync_ValidatorThrowsIsExeptionIfDaysNull_ReceivedError()
         {

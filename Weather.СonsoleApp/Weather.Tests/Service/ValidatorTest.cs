@@ -1,5 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using Weather.BL.Exceptions;
 using Weather.BL.Validators.Abstract;
 
@@ -83,6 +85,34 @@ namespace Weather.Tests.Service
             // Assert
             Exception ex = Assert.Throws<ValidationException>(result);
             Assert.AreEqual(message, ex.Message);
+        }
+
+        [Test]
+        public void ValidateForecast_CityNamesIsEmpty_ValidationMessage()
+        {
+            // Arrange
+            var message = "Entering the city is required\n";
+            var names = new List<string>() {  };
+
+            // Act
+            void result() => _validator.ValidateCityNames(names);
+
+            // Assert
+            Exception ex = Assert.Throws<ValidationException>(result);
+            Assert.AreEqual(message, ex.Message);
+        }
+
+        [Test]
+        public void ValidateCityByName_CityNamesReceived_Success()
+        {
+            // Arrange
+            var names = new List<string>() { "Minsk", "London" };
+
+            // Act
+            void result() => _validator.ValidateCityNames(names);
+
+            // Assert
+            Assert.DoesNotThrow(result);
         }
     }
 }
