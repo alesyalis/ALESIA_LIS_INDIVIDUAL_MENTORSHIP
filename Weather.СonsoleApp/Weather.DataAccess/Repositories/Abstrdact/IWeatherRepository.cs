@@ -9,6 +9,6 @@ namespace Weather.DataAccess.Repositories.Abstrdact
         Task<WeatherResponse> GetWeatherAsync(string cityName);
         Task<ForecastResponse> GetForecastAsync(string cityName, int days);
 
-        Task<List<WeatherResponse>> GetListWeatherAsync(List<string> cityName);
+        Task<IEnumerable<WeatherResponse>> GetListWeatherAsync(IEnumerable<string> cityName);
     }
 }

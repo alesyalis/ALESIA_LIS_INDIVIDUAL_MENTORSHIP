@@ -9,6 +9,6 @@ namespace Weather.BL.Services.Abstract
         Task<ResponseMessage> GetWeatherAsync(string cityName);
 
         Task<ResponseMessage> GetForecastAsync(string cityName, int days);
-        Task<ResponseMessage> GetMaxWeatherAsync(List<string> cityName);
+        Task<ResponseMessage> GetMaxWeatherAsync(IEnumerable<string> cityName);
     }
 }

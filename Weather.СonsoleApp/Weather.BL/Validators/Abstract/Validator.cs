@@ -1,4 +1,6 @@
 ﻿using AppConfiguration.AppConfig;
+using System.Collections.Generic;
+using System.Linq;
 using Weather.BL.Exceptions;
 
 namespace Weather.BL.Validators.Abstract
@@ -25,6 +27,14 @@ namespace Weather.BL.Validators.Abstract
             if (days <= _configuration.Days)
             {
                 throw new ValidationException("Input number of days is required\n");
+            }
+        }
+
+        public void ValidateCityNames(IEnumerable<string> cityNames)
+        {
+            if (cityNames.Count() == 0 || cityNames == null)
+            {
+                throw new ValidationException("Entering the city is required\n");
             }
         }
     }

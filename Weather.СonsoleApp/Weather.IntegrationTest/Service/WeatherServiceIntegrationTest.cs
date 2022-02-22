@@ -25,7 +25,7 @@ namespace Weather.IntegrationTest.Service
             _configuration = new ConfigTest();
             _weatherRepository = new WeatherRepository(_configuration);
             _validator = new Validator(_configuration);
-            _weatherService = new WeatherService(_weatherRepository, _validator);
+            _weatherService = new WeatherService(_weatherRepository, _validator, _configuration);
             _commandForecast = new GetForecastCommand(_weatherService);
             _commandWeather = new GetWeatherCommand(_weatherService);
         }

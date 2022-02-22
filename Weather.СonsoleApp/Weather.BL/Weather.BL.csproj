@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AppConfiguration\AppConfiguration.csproj" />
     <ProjectReference Include="..\Weather.DataAccess\Weather.DataAccess.csproj" />
   </ItemGroup>
 

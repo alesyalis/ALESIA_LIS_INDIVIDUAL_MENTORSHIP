@@ -46,18 +46,18 @@ namespace Weather.DataAccess.Repositories
 
             return weatherResponсe;
         }
-        public async Task<List<LocationCity>> GetLocationAsync(string cityName)
+        public async Task<IEnumerable<LocationCity>> GetLocationAsync(string cityName)
         {
             var key = _configuration.ApiKey;
             var url = _configuration.UrlLocationCity;
             var response = await _httpClient.GetAsync($"{url}{cityName}&appid={key}");
             var responceBody = await response.Content.ReadAsStringAsync();
-            var locationResponсe = JsonConvert.DeserializeObject<List<LocationCity>>(responceBody);
+            var locationResponсe = JsonConvert.DeserializeObject<IEnumerable<LocationCity>>(responceBody);
 
             return locationResponсe;
         }
 
-        public async Task<List<WeatherResponse>> GetListWeatherAsync(List<string> cityName)
+        public async Task<IEnumerable<WeatherResponse>> GetListWeatherAsync(IEnumerable<string> cityName)
         {
             var tasks = cityName.Select(async city =>
             {
@@ -66,7 +66,7 @@ namespace Weather.DataAccess.Repositories
             }).ToList();
 
             var results = await Task.WhenAll(tasks);
-            return results.ToList();
+            return results?.ToList();
         }
     }
 }
