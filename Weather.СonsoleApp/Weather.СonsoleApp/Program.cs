@@ -48,7 +48,7 @@ namespace Weather.СonsoleApp
                     }
 
                     int number = int.Parse(Console.ReadLine());
-                 
+
                     await listCommand[number].Execute();
                 }
                 catch (ValidationException ex)
@@ -59,7 +59,6 @@ namespace Weather.СonsoleApp
                 {
                     Console.WriteLine("Press any key to exit!");
                     Console.ReadKey();
-                
                 }
             }
         }

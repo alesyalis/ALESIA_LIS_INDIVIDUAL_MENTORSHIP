@@ -1,5 +1,4 @@
 ﻿using AppConfiguration.AppConfig;
-using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -49,10 +48,14 @@ namespace Weather.BL.Services
             stopWatch.Start();
 
             var listWeather = await _weatherRepository.GetListWeatherAsync(cityName);
+
             stopWatch.Stop();
+
             listWeather.ToList().ForEach(x => x.LeadTime = stopWatch.ElapsedMilliseconds);
+
             var message = new ResponseMessage { };
             var responseMessage = new StringBuilder();
+
             if (_config.IsDebug == true)
             {
                 foreach (var weather in listWeather)
@@ -70,9 +73,8 @@ namespace Weather.BL.Services
                 }
             }
             var maxWeather = listWeather?.FirstOrDefault(x => x.Main?.Temp == listWeather?.Max(t => t?.Main?.Temp));
-            responseMessage.AppendLine($"City with the highest temperature {maxWeather.Main.Temp}°C: {maxWeather.Name}." +
-              $" Successful request count: {maxWeather.CountSuccessfullRequests}, failed: {maxWeather.CountFailedRequests}.");
-
+            responseMessage.AppendLine($@"City with the highest temperature {maxWeather.Main.Temp}°C: {maxWeather.Name}.
+Successful request count: {maxWeather.CountSuccessfullRequests}, failed: {maxWeather.CountFailedRequests}.");
             message.Message = responseMessage.ToString();
             return message;
         }
@@ -83,7 +85,10 @@ namespace Weather.BL.Services
             {
                 weather.CountFailedRequests++;
             }
-            weather.CountSuccessfullRequests++;
+            else
+            {
+                weather.CountSuccessfullRequests++;
+            }
 
             var successfullRequests = weather.CountSuccessfullRequests;
             var failedRequests = weather.CountFailedRequests;

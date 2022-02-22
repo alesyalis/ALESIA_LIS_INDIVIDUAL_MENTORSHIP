@@ -2,7 +2,6 @@
 using Weather.BL.Services.Abstract;
 using ICommand = AppConfiguration.Interface.ICommand;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 
 namespace Weather.СonsoleApp.Commands
 {
@@ -15,23 +14,15 @@ namespace Weather.СonsoleApp.Commands
             _weatherService = weatherService;
         }
 
-        public string Title => "Show max weather";
+        public string Title => "Find max temperature";
 
         public async Task Execute()
         {
-            Console.WriteLine("Enter number of cities");
-            var count = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Input city names:");
+            var cities = Console.ReadLine();
+            var cityNames = cities.Split(new string[] { " ", "," }, StringSplitOptions.RemoveEmptyEntries);
 
-            List<string> listCityName = new List<string>();
-
-
-            for (int i = 0; i < count; i++)
-            {
-                Console.WriteLine("Enter the name of the cities");
-                listCityName.Add(Console.ReadLine());
-            }
-
-            var weather = await _weatherService.GetMaxWeatherAsync(listCityName);
+            var weather = await _weatherService.GetMaxWeatherAsync(cityNames);
 
             Console.WriteLine(weather.Message);
         }
