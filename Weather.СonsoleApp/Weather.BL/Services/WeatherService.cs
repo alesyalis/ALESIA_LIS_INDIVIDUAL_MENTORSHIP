@@ -60,44 +60,47 @@ namespace Weather.BL.Services
             {
                 foreach (var weather in listWeather)
                 {
-                    var maxWea = CalculateTotalsForMessage(weather);
 
-                    if (maxWea.CountFailedRequests > 0)
+                    if (weather.CountFailedRequests > 0)
                     {
-                        responseMessage.Append($"City: {maxWea.Name}. Error: Invalid city name. Timer: {maxWea.LeadTime} ms.\n");
+                        responseMessage.Append($"City: {weather.Name}. Error: Invalid city name. Timer: {weather.LeadTime} ms.\n");
                     }
                     else
                     {
-                        responseMessage.Append($"City: {maxWea.Name}. Temperature: {maxWea.Main.Temp}°C. Timer: {maxWea.LeadTime} ms.\n");
+                        responseMessage.Append($"City: {weather?.Name}. Temperature: {weather?.Main?.Temp}°C. Timer: {weather?.LeadTime} ms.\n");
                     }
                 }
             }
-            var maxWeather = listWeather?.FirstOrDefault(x => x.Main?.Temp == listWeather?.Max(t => t?.Main?.Temp));
-            responseMessage.AppendLine($@"City with the highest temperature {maxWeather.Main.Temp}°C: {maxWeather.Name}.
+
+            var maxWeather = CalculateTotalsForMessage(listWeather);
+
+            responseMessage.AppendLine($@"City with the highest temperature {maxWeather?.Main.Temp}°C: {maxWeather?.Name}.
 Successful request count: {maxWeather.CountSuccessfullRequests}, failed: {maxWeather.CountFailedRequests}.");
             message.Message = responseMessage.ToString();
             return message;
         }
 
-        private WeatherResponse CalculateTotalsForMessage(WeatherResponse weather)
+        private WeatherResponse CalculateTotalsForMessage(IEnumerable<WeatherResponse> weathers)
         {
-            if (weather.Main == null)
+            foreach(var weather in weathers)
             {
-                weather.CountFailedRequests++;
+                if (weather.Main == null)
+                    weather.CountFailedRequests++;
+                else
+                    weather.CountSuccessfullRequests++;
             }
-            else
-            {
-                weather.CountSuccessfullRequests++;
-            }
 
-            var successfullRequests = weather.CountSuccessfullRequests;
-            var failedRequests = weather.CountFailedRequests;
+            var successfullRequests = weathers.Select(x => x.CountSuccessfullRequests).Sum();
+            var failedRequests = weathers.Select(x => x.CountFailedRequests).Sum();
 
-            weather.CountFailedRequests += failedRequests;
-            weather.CountSuccessfullRequests += successfullRequests;
+            var maxTemp = weathers?.FirstOrDefault(x => x.Main?.Temp == weathers?.Max(t => t?.Main?.Temp));
 
-            return weather;
+            maxTemp.CountFailedRequests = failedRequests;
+            maxTemp.CountSuccessfullRequests = successfullRequests;
+
+            return maxTemp;
         }
+
         public async Task<ResponseMessage> GetForecastAsync(string cityName, int days)
         {
             _validator.ValidateForecast(cityName, days);
