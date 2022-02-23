@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Weather.DataAccess.Models;
 
 namespace Weather.DataAccess.Repositories.Abstrdact
@@ -7,5 +8,7 @@ namespace Weather.DataAccess.Repositories.Abstrdact
     {
         Task<WeatherResponse> GetWeatherAsync(string cityName);
         Task<ForecastResponse> GetForecastAsync(string cityName, int days);
+
+        Task<IEnumerable<WeatherResponse>> GetListWeatherAsync(IEnumerable<string> cityName);
     }
 }

@@ -12,6 +12,8 @@
 
         string UrlLocationCity { get; set; }
 
-        int Days { get; set; } 
+        int Days { get; set; }
+
+        bool IsDebug { get; set; }
     }
 }

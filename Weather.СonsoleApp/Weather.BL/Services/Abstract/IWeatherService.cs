@@ -7,7 +7,8 @@ namespace Weather.BL.Services.Abstract
     public interface IWeatherService
     {
         Task<ResponseMessage> GetWeatherAsync(string cityName);
-        Task<ResponseMessage> GetForecastAsync(string cityName, int days);
 
+        Task<ResponseMessage> GetForecastAsync(string cityName, int days);
+        Task<ResponseMessage> GetMaxWeatherAsync(IEnumerable<string> cityName);
     }
 }

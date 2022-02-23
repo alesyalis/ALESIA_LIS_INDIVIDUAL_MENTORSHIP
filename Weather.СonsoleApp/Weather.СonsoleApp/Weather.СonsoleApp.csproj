@@ -99,6 +99,7 @@
     <Compile Include="App_Start\NinjectWebCommon.cs" />
     <Compile Include="Commands\ExitCommand.cs" />
     <Compile Include="Commands\GetForecastCommand.cs" />
+    <Compile Include="Commands\GetMaxWeatherCommand.cs" />
     <Compile Include="Commands\GetWeatherCommand.cs" />
     <Compile Include="Infrastructures\RegistrationModule.cs" />
     <Compile Include="Program.cs" />

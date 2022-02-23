@@ -30,10 +30,11 @@ namespace Weather.СonsoleApp
             var getWeather = new GetWeatherCommand(_weatherService);
             var getForecast = new GetForecastCommand(_weatherService);
             var exit = new ExitCommand();
+            var getMaxTemperature = new GetMaxWeatherCommand(_weatherService);
 
             var listCommand = new List<ICommand>()
             {
-                exit, getWeather, getForecast, 
+                exit, getWeather, getForecast, getMaxTemperature
             };
 
             bool showMenu = true;
@@ -47,7 +48,7 @@ namespace Weather.СonsoleApp
                     }
 
                     int number = int.Parse(Console.ReadLine());
-                 
+
                     await listCommand[number].Execute();
                 }
                 catch (ValidationException ex)

@@ -5,5 +5,11 @@
         public TemperatureInfo Main { get; set; }
 
         public string Name { get; set; }
+
+        public long LeadTime { get; set; }
+
+        public int CountSuccessfullRequests { get; set; }
+
+        public int CountFailedRequests { get; set; }
     }
 }

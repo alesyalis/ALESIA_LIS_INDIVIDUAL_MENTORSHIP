@@ -13,5 +13,7 @@
         public string UrlLocationCity { get; set; }
 
         public int Days { get; set; }
+
+        public bool IsDebug { get; set; }
     }
 }

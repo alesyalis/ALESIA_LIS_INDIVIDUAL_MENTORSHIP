@@ -1,4 +1,5 @@
 ﻿using AppConfiguration.Interface;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Weather.BL.Exceptions;
 using Weather.BL.Services;
@@ -25,7 +26,7 @@ namespace Weather.IntegrationTest.Service
             _configuration = new ConfigTest();
             _weatherRepository = new WeatherRepository(_configuration);
             _validator = new Validator(_configuration);
-            _weatherService = new WeatherService(_weatherRepository, _validator);
+            _weatherService = new WeatherService(_weatherRepository, _validator, _configuration);
             _commandForecast = new GetForecastCommand(_weatherService);
             _commandWeather = new GetWeatherCommand(_weatherService);
         }
@@ -72,7 +73,6 @@ namespace Weather.IntegrationTest.Service
             var day = 1;
             for (var d = 1; d <= days; d++)
             {
-                
                 temp += string.Join(",", $"Day {day++}" +
                 $": {regex}. ({description[0]}|{description[1]}|{description[2]}|{description[3]})\n");
             }
@@ -142,7 +142,7 @@ namespace Weather.IntegrationTest.Service
             var result = Assert.Throws<ValidationException>(() => _validator.ValidateForecast(name, days));
             Assert.Equal(message, result.Message);
         }
-        
+
         [Fact]
         public void GetForecastAsync_ValidatorThrowsIsExeptionIfDaysNull_ReceivedError()
         {
@@ -154,6 +154,37 @@ namespace Weather.IntegrationTest.Service
             //Act
             // Assert
             var result = Assert.Throws<ValidationException>(() => _validator.ValidateForecast(name, days));
+            Assert.Equal(message, result.Message);
+        }
+
+        [Fact]
+        public async Task GetMaxWeather_CorrectWeatherReceived_IsErrorFalseAndMessageIsGenerated()
+        {
+            // Arrange
+            var names = new List<string>() { "Cuba", "Minsk" };
+
+            var regex = @"(\w?)(.*?)\.| (\B\W)(.*?)\.";
+
+            var message = $"^City with the highest temperature {regex}";
+
+            //Act
+            var response = await _weatherService.GetMaxWeatherAsync(names);
+
+            // Assert
+            Assert.False(response.IsError);
+            Assert.Matches(message, response.Message);
+        }
+
+        [Fact]
+        public async Task GetMaxWeather_ReceivedIncorrectWeather_IsErrorTrue()
+        {
+            // Arrange
+            var names = new List<string>() { };
+            var message = "Entering the city is required\n";
+
+            //Act
+            // Assert
+            var result = Assert.Throws<ValidationException>(() => _validator.ValidateCityNames(names));
             Assert.Equal(message, result.Message);
         }
     }

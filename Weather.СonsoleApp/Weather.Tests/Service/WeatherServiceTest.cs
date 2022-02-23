@@ -16,16 +16,19 @@ namespace Weather.Tests.Service
         private WeatherService _weatherService;
         private Mock<IWeatherRepository> _weatherRepositoryMock;
         private Mock<IValidator> _validatorMock;
+        private ConfigTest _configuration;
 
         [SetUp]
         public void Setup()
         {
             _weatherRepositoryMock = new Mock<IWeatherRepository>();
             _validatorMock = new Mock<IValidator>();
+            _configuration = new ConfigTest();
 
             _weatherService = new WeatherService(
                 _weatherRepositoryMock.Object,
-                _validatorMock.Object);
+                _validatorMock.Object,
+                _configuration);
         }
 
         [TestCase("Minsk", -1, "Dress warmly.")]
@@ -185,6 +188,41 @@ namespace Weather.Tests.Service
             // Assert
             Exception result = Assert.ThrowsAsync<ValidationException>(() => _weatherService.GetForecastAsync(name, days));
             Assert.AreEqual(expectedExcetpion.Message, result.Message);
+        }
+
+        [Test]
+        public async Task GetListWeatherAsync_ReceivedСorrectWeather_IsErrorTrueAndMessageIsGenerated()
+        {
+            // Arrange
+            var names = new List<string>() { "Cuba", "Minsk" };
+
+            var maxWeather = new WeatherResponse()
+            {
+                Name = "Cuba",
+                CountFailedRequests = 0,
+                CountSuccessfullRequests = 0,
+                Main = new TemperatureInfo() { Temp = 25}
+            };
+            var weather = new List<WeatherResponse>() { maxWeather, new WeatherResponse()
+            {
+                Name = "Minsk",
+                CountFailedRequests = 0,
+                CountSuccessfullRequests = 0,
+                Main = new TemperatureInfo() { Temp = 5}
+            } };
+            var success = 2;
+            var message = $"City with the highest temperature {maxWeather.Main.Temp}°C: {maxWeather.Name}." +
+                  $"\r\nSuccessful request count: {success}, failed: {maxWeather.CountFailedRequests}.\r\n";
+
+            _weatherRepositoryMock.Setup(x => x.GetListWeatherAsync(names)).ReturnsAsync(weather);
+
+            // Act
+            var result = await _weatherService.GetMaxWeatherAsync(names);
+
+            // Assert
+            _validatorMock.Verify(x => x.ValidateCityNames(names), Times.Once());
+            Assert.IsNotNull(result);
+            Assert.AreEqual(message, result.Message);
         }
     }
 }
