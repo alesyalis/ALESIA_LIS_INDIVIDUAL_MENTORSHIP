@@ -7,6 +7,7 @@ using AppConfiguration.AppConfig;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using AppConfiguration.Extentions;
 
 namespace Weather.DataAccess.Repositories
 {
@@ -62,12 +63,17 @@ namespace Weather.DataAccess.Repositories
         {
             var tasks = cityName.Select(async city =>
             {
+                if(token.IsCancellationRequested)
+                    return null;
                 var listWeatherResponse = await GetWeatherAsync(city);
 
                 return listWeatherResponse;
             }).ToList();
+            
+            tasks.ForEach(async x => await x.CancelOnError(token));
 
             var results = await Task.WhenAll(tasks);
+            
             return results?.ToList();
         }
     }
