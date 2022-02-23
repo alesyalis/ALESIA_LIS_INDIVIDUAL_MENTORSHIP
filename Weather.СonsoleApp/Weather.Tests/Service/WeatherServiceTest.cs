@@ -191,26 +191,6 @@ namespace Weather.Tests.Service
         }
 
         [Test]
-        public async Task GetListWeatherAsync_ReceivedIncorrectWeather_IsErrorTrueAndMessageIsGenerated()
-        {
-            // Arrange
-            var names = new List<string>() { "!!!!", "" };
-            var weather = new List<WeatherResponse>() { };
-            var message = $"City: {weather[0].Name}. Temperature: {weather[0].Main?.Temp}°C. Timer: {weather[0].LeadTime} ms.\n";
-           
-            _weatherRepositoryMock.Setup(x => x.GetListWeatherAsync(names)).ReturnsAsync(weather);
-
-            // Act
-            var result = await _weatherService.GetMaxWeatherAsync(names);
-
-            // Assert
-            _validatorMock.Verify(x => x.ValidateCityNames(names), Times.Once());
-            Assert.IsNotNull(result);
-            Assert.AreEqual(message, result.Message);
-            Assert.IsTrue(result.IsError);
-        }
-
-        [Test]
         public async Task GetListWeatherAsync_ReceivedСorrectWeather_IsErrorTrueAndMessageIsGenerated()
         {
             // Arrange

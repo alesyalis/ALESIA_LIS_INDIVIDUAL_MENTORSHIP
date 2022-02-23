@@ -1,4 +1,5 @@
 ﻿using AppConfiguration.Interface;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Weather.BL.Exceptions;
 using Weather.BL.Services;
@@ -153,6 +154,37 @@ namespace Weather.IntegrationTest.Service
             //Act
             // Assert
             var result = Assert.Throws<ValidationException>(() => _validator.ValidateForecast(name, days));
+            Assert.Equal(message, result.Message);
+        }
+
+        [Fact]
+        public async Task GetMaxWeather_CorrectWeatherReceived_IsErrorFalseAndMessageIsGenerated()
+        {
+            // Arrange
+            var names = new List<string>() { "Cuba", "Minsk" };
+
+            var regex = @"(\w?)(.*?)\.| (\B\W)(.*?)\.";
+
+            var message = $"^City with the highest temperature {regex}";
+
+            //Act
+            var response = await _weatherService.GetMaxWeatherAsync(names);
+
+            // Assert
+            Assert.False(response.IsError);
+            Assert.Matches(message, response.Message);
+        }
+
+        [Fact]
+        public async Task GetMaxWeather_ReceivedIncorrectWeather_IsErrorTrue()
+        {
+            // Arrange
+            var names = new List<string>() { };
+            var message = "Entering the city is required\n";
+
+            //Act
+            // Assert
+            var result = Assert.Throws<ValidationException>(() => _validator.ValidateCityNames(names));
             Assert.Equal(message, result.Message);
         }
     }
