@@ -15,5 +15,6 @@
         int Days { get; set; }
 
         bool IsDebug { get; set; }
+        int Canceled { get; set; }
     }
 }

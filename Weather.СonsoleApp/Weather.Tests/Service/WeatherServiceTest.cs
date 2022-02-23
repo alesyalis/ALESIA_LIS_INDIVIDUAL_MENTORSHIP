@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Weather.BL.Exceptions;
 using Weather.BL.Services;
@@ -17,6 +18,7 @@ namespace Weather.Tests.Service
         private Mock<IWeatherRepository> _weatherRepositoryMock;
         private Mock<IValidator> _validatorMock;
         private ConfigTest _configuration;
+        private CancellationTokenSource _cancellationTokenSource;   
 
         [SetUp]
         public void Setup()
@@ -29,6 +31,7 @@ namespace Weather.Tests.Service
                 _weatherRepositoryMock.Object,
                 _validatorMock.Object,
                 _configuration);
+            _cancellationTokenSource = new CancellationTokenSource();   
         }
 
         [TestCase("Minsk", -1, "Dress warmly.")]
@@ -214,7 +217,7 @@ namespace Weather.Tests.Service
             var message = $"City with the highest temperature {maxWeather.Main.Temp}°C: {maxWeather.Name}." +
                   $"\r\nSuccessful request count: {success}, failed: {maxWeather.CountFailedRequests}.\r\n";
 
-            _weatherRepositoryMock.Setup(x => x.GetListWeatherAsync(names)).ReturnsAsync(weather);
+            _weatherRepositoryMock.Setup(x => x.GetListWeatherAsync(names, _cancellationTokenSource)).ReturnsAsync(weather);
 
             // Act
             var result = await _weatherService.GetMaxWeatherAsync(names);

@@ -11,6 +11,7 @@ using Weather.СonsoleApp.Commands;
 using AppConfiguration.Interface;
 using System.Collections.Generic;
 using Weather.BL.Exceptions;
+using System.Threading;
 
 namespace Weather.СonsoleApp
 {
@@ -30,7 +31,8 @@ namespace Weather.СonsoleApp
             var getWeather = new GetWeatherCommand(_weatherService);
             var getForecast = new GetForecastCommand(_weatherService);
             var exit = new ExitCommand();
-            var getMaxTemperature = new GetMaxWeatherCommand(_weatherService);
+            var token = new CancellationTokenSource();
+            var getMaxTemperature = new GetMaxWeatherCommand(_weatherService, token);   
 
             var listCommand = new List<ICommand>()
             {

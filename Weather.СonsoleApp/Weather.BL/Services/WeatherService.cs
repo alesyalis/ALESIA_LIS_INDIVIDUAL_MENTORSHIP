@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Weather.BL.DTOs;
 using Weather.BL.Services.Abstract;
@@ -43,11 +44,14 @@ namespace Weather.BL.Services
 
         public async Task<ResponseMessage> GetMaxWeatherAsync(IEnumerable<string> cityName)
         {
+            var ctr = new CancellationTokenSource();
+
             _validator.ValidateCityNames(cityName);
+
             var stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            var listWeather = await _weatherRepository.GetListWeatherAsync(cityName);
+            var listWeather = await _weatherRepository.GetListWeatherAsync(cityName, ctr);
 
             stopWatch.Stop();
 
@@ -60,7 +64,11 @@ namespace Weather.BL.Services
             {
                 foreach (var weather in listWeather)
                 {
-
+                    if(weather.LeadTime > _config.Canceled)
+                    {
+                        ctr.Cancel();
+                        responseMessage.Append($"Request timed out\n");
+                    }
                     if (weather.CountFailedRequests > 0)
                     {
                         responseMessage.Append($"City: {weather.Name}. Error: Invalid city name. Timer: {weather.LeadTime} ms.\n");

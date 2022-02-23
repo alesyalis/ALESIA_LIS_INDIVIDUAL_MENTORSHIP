@@ -2,6 +2,7 @@
 using Weather.BL.Services.Abstract;
 using ICommand = AppConfiguration.Interface.ICommand;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace Weather.СonsoleApp.Commands
 {
@@ -9,7 +10,7 @@ namespace Weather.СonsoleApp.Commands
     {
 
         private IWeatherService _weatherService;
-        public GetMaxWeatherCommand(IWeatherService weatherService)
+        public GetMaxWeatherCommand(IWeatherService weatherService, CancellationTokenSource token)
         {
             _weatherService = weatherService;
         }

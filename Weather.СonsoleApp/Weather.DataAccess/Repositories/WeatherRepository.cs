@@ -6,6 +6,7 @@ using System.Net.Http;
 using AppConfiguration.AppConfig;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace Weather.DataAccess.Repositories
 {
@@ -57,11 +58,12 @@ namespace Weather.DataAccess.Repositories
             return locationResponсe;
         }
 
-        public async Task<IEnumerable<WeatherResponse>> GetListWeatherAsync(IEnumerable<string> cityName)
+        public async Task<IEnumerable<WeatherResponse>> GetListWeatherAsync(IEnumerable<string> cityName, CancellationTokenSource token)
         {
             var tasks = cityName.Select(async city =>
             {
                 var listWeatherResponse = await GetWeatherAsync(city);
+
                 return listWeatherResponse;
             }).ToList();
 
