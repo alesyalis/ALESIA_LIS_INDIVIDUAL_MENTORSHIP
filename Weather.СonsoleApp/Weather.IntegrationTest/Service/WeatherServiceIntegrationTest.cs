@@ -20,6 +20,7 @@ namespace Weather.IntegrationTest.Service
         private readonly ConfigTest _configuration;
         private readonly ICommand _commandForecast;
         private readonly ICommand _commandWeather;
+        private CancellationTokenSource _token;
 
 
         public WeatherServiceIntegrationTest()
@@ -30,6 +31,7 @@ namespace Weather.IntegrationTest.Service
             _weatherService = new WeatherService(_weatherRepository, _validator, _configuration);
             _commandForecast = new GetForecastCommand(_weatherService);
             _commandWeather = new GetWeatherCommand(_weatherService);
+            _token = new CancellationTokenSource();
         }
 
         [Fact]
@@ -169,7 +171,7 @@ namespace Weather.IntegrationTest.Service
             var message = $"^City with the highest temperature {regex}";
 
             //Act
-            var response = await _weatherService.GetMaxWeatherAsync(names);
+            var response = await _weatherService.GetMaxWeatherAsync(names, _token);
 
             // Assert
             Assert.False(response.IsError);

@@ -18,19 +18,21 @@ namespace Weather.BL.Services
         private readonly IWeatherRepository _weatherRepository;
         private readonly IValidator _validator;
         private readonly IConfig _config;
+        private CancellationTokenSource _cancellationTokenSource;
 
         public WeatherService(IWeatherRepository weatherRepository, IValidator validator, IConfig config)
         {
             _weatherRepository = weatherRepository;
             _validator = validator;
             _config = config;
+            _cancellationTokenSource = new CancellationTokenSource();   
         }
 
         public async Task<ResponseMessage> GetWeatherAsync(string cityName)
         {
             _validator.ValidateCityByName(cityName);
 
-            var weather = await _weatherRepository.GetWeatherAsync(cityName);
+            var weather = await _weatherRepository.GetWeatherAsync(cityName, _cancellationTokenSource);
 
             if (weather.Main == null)
             {
@@ -42,16 +44,15 @@ namespace Weather.BL.Services
             return GetWeatherResponseMessage(weather, description);
         }
 
-        public async Task<ResponseMessage> GetMaxWeatherAsync(IEnumerable<string> cityName)
+        public async Task<ResponseMessage> GetMaxWeatherAsync(IEnumerable<string> cityName, CancellationTokenSource token)
         {
-            var ctr = new CancellationTokenSource();
-
+            token = _cancellationTokenSource;
             _validator.ValidateCityNames(cityName);
 
             var stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            var listWeather = await _weatherRepository.GetListWeatherAsync(cityName, ctr);
+            var listWeather = await _weatherRepository.GetListWeatherAsync(cityName, token);
 
             stopWatch.Stop();
 
@@ -64,11 +65,6 @@ namespace Weather.BL.Services
             {
                 foreach (var weather in listWeather)
                 {
-                    if(weather.LeadTime > _config.Canceled)
-                    {
-                        ctr.Cancel();
-                        responseMessage.Append($"Request timed out\n");
-                    }
                     if (weather.CountFailedRequests > 0)
                     {
                         responseMessage.Append($"City: {weather.Name}. Error: Invalid city name. Timer: {weather.LeadTime} ms.\n");
@@ -83,7 +79,7 @@ namespace Weather.BL.Services
             var maxWeather = CalculateTotalsForMessage(listWeather);
 
             responseMessage.AppendLine($@"City with the highest temperature {maxWeather?.Main.Temp}°C: {maxWeather?.Name}.
-Successful request count: {maxWeather.CountSuccessfullRequests}, failed: {maxWeather.CountFailedRequests}.");
+Successful request count: {maxWeather.CountSuccessfullRequests}, failed: {maxWeather.CountFailedRequests}, canceled: {maxWeather.Canceled}.");
             message.Message = responseMessage.ToString();
             return message;
         }
@@ -94,17 +90,22 @@ Successful request count: {maxWeather.CountSuccessfullRequests}, failed: {maxWea
             {
                 if (weather.Main == null)
                     weather.CountFailedRequests++;
+                else if (weather.LeadTime > _config.Canceled)
+                    weather.Canceled++;
                 else
                     weather.CountSuccessfullRequests++;
+
             }
 
             var successfullRequests = weathers.Select(x => x.CountSuccessfullRequests).Sum();
             var failedRequests = weathers.Select(x => x.CountFailedRequests).Sum();
+            var canceled = weathers.Select(x => x.Canceled).Sum();
 
             var maxTemp = weathers?.FirstOrDefault(x => x.Main?.Temp == weathers?.Max(t => t?.Main?.Temp));
 
             maxTemp.CountFailedRequests = failedRequests;
             maxTemp.CountSuccessfullRequests = successfullRequests;
+            maxTemp.Canceled = canceled;    
 
             return maxTemp;
         }

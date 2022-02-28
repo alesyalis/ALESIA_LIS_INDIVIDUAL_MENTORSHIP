@@ -11,5 +11,9 @@
         public int CountSuccessfullRequests { get; set; }
 
         public int CountFailedRequests { get; set; }
+
+        public string Status { get; set; }
+        
+        public int Canceled { get; set; }   
     }
 }

@@ -10,6 +10,6 @@ namespace Weather.BL.Services.Abstract
         Task<ResponseMessage> GetWeatherAsync(string cityName);
 
         Task<ResponseMessage> GetForecastAsync(string cityName, int days);
-        Task<ResponseMessage> GetMaxWeatherAsync(IEnumerable<string> cityName);
+        Task<ResponseMessage> GetMaxWeatherAsync(IEnumerable<string> cityName, CancellationTokenSource token);
     }
 }

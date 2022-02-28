@@ -32,7 +32,7 @@ namespace Weather.СonsoleApp
             var getForecast = new GetForecastCommand(_weatherService);
             var exit = new ExitCommand();
             var token = new CancellationTokenSource();
-            var getMaxTemperature = new GetMaxWeatherCommand(_weatherService, token);   
+            var getMaxTemperature = new GetMaxWeatherCommand(_weatherService, token);
 
             var listCommand = new List<ICommand>()
             {
