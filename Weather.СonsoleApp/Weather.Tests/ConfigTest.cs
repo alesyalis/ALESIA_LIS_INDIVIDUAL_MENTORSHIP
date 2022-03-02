@@ -17,5 +17,7 @@ namespace Weather.Tests
         public int Days { get; set; }
 
         public bool IsDebug { get; set; }
+
+        public int Canceled { get; set; }   
     }
 }

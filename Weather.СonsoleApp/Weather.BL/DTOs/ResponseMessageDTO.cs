@@ -1,6 +1,6 @@
 ﻿namespace Weather.BL.DTOs
 {
-    public class ResponseMessage
+    public class ResponseMessageDTO
     {
         public bool IsError { get; set; }
 

@@ -28,7 +28,7 @@ namespace Weather.BL.Services
             _cancellationTokenSource = new CancellationTokenSource();   
         }
 
-        public async Task<ResponseMessage> GetWeatherAsync(string cityName)
+        public async Task<ResponseMessageDTO> GetWeatherAsync(string cityName)
         {
             _validator.ValidateCityByName(cityName);
 
@@ -36,7 +36,7 @@ namespace Weather.BL.Services
 
             if (weather.Main == null)
             {
-                return new ResponseMessage() { IsError = true, Message = $"{cityName} not found" };
+                return new ResponseMessageDTO() { IsError = true, Message = $"{cityName} not found" };
             }
 
             var description = GetWeatherDescription(weather);
@@ -44,7 +44,7 @@ namespace Weather.BL.Services
             return GetWeatherResponseMessage(weather, description);
         }
 
-        public async Task<ResponseMessage> GetMaxWeatherAsync(IEnumerable<string> cityName, CancellationTokenSource token)
+        public async Task<ResponseMessageDTO> GetMaxWeatherAsync(IEnumerable<string> cityName, CancellationTokenSource token)
         {
             token = _cancellationTokenSource;
             _validator.ValidateCityNames(cityName);
@@ -58,7 +58,7 @@ namespace Weather.BL.Services
 
             listWeather.ToList().ForEach(x => x.LeadTime = stopWatch.ElapsedMilliseconds);
 
-            var message = new ResponseMessage { };
+            var message = new ResponseMessageDTO { };
             var responseMessage = new StringBuilder();
 
             if (_config.IsDebug == true)
@@ -110,7 +110,7 @@ Successful request count: {maxWeather.CountSuccessfullRequests}, failed: {maxWea
             return maxTemp;
         }
 
-        public async Task<ResponseMessage> GetForecastAsync(string cityName, int days)
+        public async Task<ResponseMessageDTO> GetForecastAsync(string cityName, int days)
         {
             _validator.ValidateForecast(cityName, days);
 
@@ -119,16 +119,16 @@ Successful request count: {maxWeather.CountSuccessfullRequests}, failed: {maxWea
             if (weatherForecast.List == null)
             {
                 var messageForecast = $"{cityName} not found";
-                return new ResponseMessage { Message = messageForecast };
+                return new ResponseMessageDTO { Message = messageForecast };
             }
             var responseMessage = GetForecastMessage(weatherForecast);
 
             return responseMessage;
         }
 
-        private ResponseMessage GetWeatherResponseMessage(WeatherResponse weatherResponse, string description)
+        private ResponseMessageDTO GetWeatherResponseMessage(WeatherResponse weatherResponse, string description)
         {
-            var weatherDTO = new ResponseMessage
+            var weatherDTO = new ResponseMessageDTO
             {
                 IsError = false,
                 Message = $"In {weatherResponse.Name}: {weatherResponse.Main.Temp} °C now. {description} "
@@ -137,9 +137,9 @@ Successful request count: {maxWeather.CountSuccessfullRequests}, failed: {maxWea
             return weatherDTO;
         }
 
-        private ResponseMessage GetForecastMessage(ForecastResponse forecastResponse)
+        private ResponseMessageDTO GetForecastMessage(ForecastResponse forecastResponse)
         {
-            var responseMessage = new ResponseMessage { };
+            var responseMessage = new ResponseMessageDTO { };
             var temp = forecastResponse.List.First();
             var message = $"{forecastResponse.CityName.Name} weather forecast: \n";
             var days = 1;
