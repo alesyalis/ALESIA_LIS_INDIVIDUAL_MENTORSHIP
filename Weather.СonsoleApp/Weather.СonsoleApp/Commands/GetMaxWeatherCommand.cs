@@ -2,6 +2,7 @@
 using Weather.BL.Services.Abstract;
 using ICommand = AppConfiguration.Interface.ICommand;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace Weather.СonsoleApp.Commands
 {
@@ -9,9 +10,11 @@ namespace Weather.СonsoleApp.Commands
     {
 
         private IWeatherService _weatherService;
-        public GetMaxWeatherCommand(IWeatherService weatherService)
+        private CancellationTokenSource _token;
+        public GetMaxWeatherCommand(IWeatherService weatherService, CancellationTokenSource token)
         {
             _weatherService = weatherService;
+            _token = token; 
         }
 
         public string Title => "Find max temperature";
@@ -22,7 +25,7 @@ namespace Weather.СonsoleApp.Commands
             var cities = Console.ReadLine();
             var cityNames = cities.Split(new string[] { " ", "," }, StringSplitOptions.RemoveEmptyEntries);
 
-            var weather = await _weatherService.GetMaxWeatherAsync(cityNames);
+            var weather = await _weatherService.GetMaxWeatherAsync(cityNames, _token);
 
             Console.WriteLine(weather.Message);
         }

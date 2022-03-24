@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Weather.BL.Exceptions;
 using Weather.BL.Services;
@@ -17,6 +18,7 @@ namespace Weather.Tests.Service
         private Mock<IWeatherRepository> _weatherRepositoryMock;
         private Mock<IValidator> _validatorMock;
         private ConfigTest _configuration;
+        private CancellationTokenSource _token;   
 
         [SetUp]
         public void Setup()
@@ -29,6 +31,7 @@ namespace Weather.Tests.Service
                 _weatherRepositoryMock.Object,
                 _validatorMock.Object,
                 _configuration);
+            _token = new CancellationTokenSource();   
         }
 
         [TestCase("Minsk", -1, "Dress warmly.")]
@@ -45,7 +48,7 @@ namespace Weather.Tests.Service
             };
             var message = $"In {weather.Name}: {weather.Main.Temp} °C now. {weather.Main.Description} ";
 
-            _weatherRepositoryMock.Setup(x => x.GetWeatherAsync(cityName)).ReturnsAsync(weather);
+            _weatherRepositoryMock.Setup(x => x.GetWeatherAsync(cityName, _token)).ReturnsAsync(weather);
 
             // Act
             var result = await _weatherService.GetWeatherAsync(cityName);
@@ -65,7 +68,7 @@ namespace Weather.Tests.Service
             // Arrange
             var weather = new WeatherResponse() { };
             var message = $"{name} not found";
-            _weatherRepositoryMock.Setup(x => x.GetWeatherAsync(name)).ReturnsAsync(() => weather);
+            _weatherRepositoryMock.Setup(x => x.GetWeatherAsync(name, _token)).ReturnsAsync(() => weather);
 
             // Act
             var result = await _weatherService.GetWeatherAsync(name);
@@ -84,7 +87,7 @@ namespace Weather.Tests.Service
             // Arrange
             var name = "";
             var expectedExcetpion = new Exception();
-            _weatherRepositoryMock.Setup(x => x.GetWeatherAsync(name)).ReturnsAsync(() => throw new Exception());
+            _weatherRepositoryMock.Setup(x => x.GetWeatherAsync(name, _token)).ReturnsAsync(() => throw new Exception());
 
             // Act
             // Assert
@@ -214,10 +217,10 @@ namespace Weather.Tests.Service
             var message = $"City with the highest temperature {maxWeather.Main.Temp}°C: {maxWeather.Name}." +
                   $"\r\nSuccessful request count: {success}, failed: {maxWeather.CountFailedRequests}.\r\n";
 
-            _weatherRepositoryMock.Setup(x => x.GetListWeatherAsync(names)).ReturnsAsync(weather);
+            _weatherRepositoryMock.Setup(x => x.GetListWeatherAsync(names, _token)).ReturnsAsync(weather);
 
             // Act
-            var result = await _weatherService.GetMaxWeatherAsync(names);
+            var result = await _weatherService.GetMaxWeatherAsync(names, _token);
 
             // Assert
             _validatorMock.Verify(x => x.ValidateCityNames(names), Times.Once());

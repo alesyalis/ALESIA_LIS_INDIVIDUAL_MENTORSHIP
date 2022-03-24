@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weather.Tests", "Weather.Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weather.IntegrationTest", "Weather.IntegrationTest\Weather.IntegrationTest.csproj", "{57BB5637-4AE3-4F07-8613-4BFE857BBA98}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weather.Host", "Weather.Host\Weather.Host.csproj", "{05D89CCD-DB78-4B65-90A4-3188F545F190}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{57BB5637-4AE3-4F07-8613-4BFE857BBA98}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57BB5637-4AE3-4F07-8613-4BFE857BBA98}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57BB5637-4AE3-4F07-8613-4BFE857BBA98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05D89CCD-DB78-4B65-90A4-3188F545F190}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05D89CCD-DB78-4B65-90A4-3188F545F190}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05D89CCD-DB78-4B65-90A4-3188F545F190}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05D89CCD-DB78-4B65-90A4-3188F545F190}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

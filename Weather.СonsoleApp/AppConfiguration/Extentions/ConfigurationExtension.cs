@@ -25,6 +25,7 @@ namespace AppConfiguration.Extentions
             configurationRoot.UrlLocationCity = conf["urlLocationCity"];
             configurationRoot.Days = int.Parse(conf["days"]);
             configurationRoot.IsDebug = bool.Parse(conf["isDebug"]);
+            configurationRoot.Canceled = int.Parse(conf["canceled"]);
 
             return configurationRoot;
         }

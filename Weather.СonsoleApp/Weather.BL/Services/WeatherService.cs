@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Weather.BL.DTOs;
 using Weather.BL.Services.Abstract;
@@ -17,23 +18,25 @@ namespace Weather.BL.Services
         private readonly IWeatherRepository _weatherRepository;
         private readonly IValidator _validator;
         private readonly IConfig _config;
+        private CancellationTokenSource _cancellationTokenSource;
 
         public WeatherService(IWeatherRepository weatherRepository, IValidator validator, IConfig config)
         {
             _weatherRepository = weatherRepository;
             _validator = validator;
             _config = config;
+            _cancellationTokenSource = new CancellationTokenSource();   
         }
 
-        public async Task<ResponseMessage> GetWeatherAsync(string cityName)
+        public async Task<ResponseMessageDTO> GetWeatherAsync(string cityName)
         {
             _validator.ValidateCityByName(cityName);
 
-            var weather = await _weatherRepository.GetWeatherAsync(cityName);
+            var weather = await _weatherRepository.GetWeatherAsync(cityName, _cancellationTokenSource);
 
             if (weather.Main == null)
             {
-                return new ResponseMessage() { IsError = true, Message = $"{cityName} not found" };
+                return new ResponseMessageDTO() { IsError = true, Message = $"{cityName} not found" };
             }
 
             var description = GetWeatherDescription(weather);
@@ -41,26 +44,27 @@ namespace Weather.BL.Services
             return GetWeatherResponseMessage(weather, description);
         }
 
-        public async Task<ResponseMessage> GetMaxWeatherAsync(IEnumerable<string> cityName)
+        public async Task<ResponseMessageDTO> GetMaxWeatherAsync(IEnumerable<string> cityName, CancellationTokenSource token)
         {
+            token = _cancellationTokenSource;
             _validator.ValidateCityNames(cityName);
+
             var stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            var listWeather = await _weatherRepository.GetListWeatherAsync(cityName);
+            var listWeather = await _weatherRepository.GetListWeatherAsync(cityName, token);
 
             stopWatch.Stop();
 
             listWeather.ToList().ForEach(x => x.LeadTime = stopWatch.ElapsedMilliseconds);
 
-            var message = new ResponseMessage { };
+            var message = new ResponseMessageDTO { };
             var responseMessage = new StringBuilder();
 
             if (_config.IsDebug == true)
             {
                 foreach (var weather in listWeather)
                 {
-
                     if (weather.CountFailedRequests > 0)
                     {
                         responseMessage.Append($"City: {weather.Name}. Error: Invalid city name. Timer: {weather.LeadTime} ms.\n");
@@ -75,7 +79,7 @@ namespace Weather.BL.Services
             var maxWeather = CalculateTotalsForMessage(listWeather);
 
             responseMessage.AppendLine($@"City with the highest temperature {maxWeather?.Main.Temp}°C: {maxWeather?.Name}.
-Successful request count: {maxWeather.CountSuccessfullRequests}, failed: {maxWeather.CountFailedRequests}.");
+Successful request count: {maxWeather.CountSuccessfullRequests}, failed: {maxWeather.CountFailedRequests}, canceled: {maxWeather.Canceled}.");
             message.Message = responseMessage.ToString();
             return message;
         }
@@ -86,22 +90,27 @@ Successful request count: {maxWeather.CountSuccessfullRequests}, failed: {maxWea
             {
                 if (weather.Main == null)
                     weather.CountFailedRequests++;
+                else if (weather.LeadTime > _config.Canceled)
+                    weather.Canceled++;
                 else
                     weather.CountSuccessfullRequests++;
+
             }
 
             var successfullRequests = weathers.Select(x => x.CountSuccessfullRequests).Sum();
             var failedRequests = weathers.Select(x => x.CountFailedRequests).Sum();
+            var canceled = weathers.Select(x => x.Canceled).Sum();
 
             var maxTemp = weathers?.FirstOrDefault(x => x.Main?.Temp == weathers?.Max(t => t?.Main?.Temp));
 
             maxTemp.CountFailedRequests = failedRequests;
             maxTemp.CountSuccessfullRequests = successfullRequests;
+            maxTemp.Canceled = canceled;    
 
             return maxTemp;
         }
 
-        public async Task<ResponseMessage> GetForecastAsync(string cityName, int days)
+        public async Task<ResponseMessageDTO> GetForecastAsync(string cityName, int days)
         {
             _validator.ValidateForecast(cityName, days);
 
@@ -110,16 +119,16 @@ Successful request count: {maxWeather.CountSuccessfullRequests}, failed: {maxWea
             if (weatherForecast.List == null)
             {
                 var messageForecast = $"{cityName} not found";
-                return new ResponseMessage { Message = messageForecast };
+                return new ResponseMessageDTO { Message = messageForecast };
             }
             var responseMessage = GetForecastMessage(weatherForecast);
 
             return responseMessage;
         }
 
-        private ResponseMessage GetWeatherResponseMessage(WeatherResponse weatherResponse, string description)
+        private ResponseMessageDTO GetWeatherResponseMessage(WeatherResponse weatherResponse, string description)
         {
-            var weatherDTO = new ResponseMessage
+            var weatherDTO = new ResponseMessageDTO
             {
                 IsError = false,
                 Message = $"In {weatherResponse.Name}: {weatherResponse.Main.Temp} °C now. {description} "
@@ -128,9 +137,9 @@ Successful request count: {maxWeather.CountSuccessfullRequests}, failed: {maxWea
             return weatherDTO;
         }
 
-        private ResponseMessage GetForecastMessage(ForecastResponse forecastResponse)
+        private ResponseMessageDTO GetForecastMessage(ForecastResponse forecastResponse)
         {
-            var responseMessage = new ResponseMessage { };
+            var responseMessage = new ResponseMessageDTO { };
             var temp = forecastResponse.List.First();
             var message = $"{forecastResponse.CityName.Name} weather forecast: \n";
             var days = 1;
