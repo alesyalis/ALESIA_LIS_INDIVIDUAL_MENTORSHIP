@@ -28,5 +28,19 @@ namespace AppConfiguration.Extentions
 
             return configurationRoot;
         }
+        public static Config GetWebAPIConfig(this Config configuration)
+        {
+            var conf = new ConfigurationBuilder().AddJsonFile("appsettings.json")
+                                                .Build();
+            configuration.ApiKey = conf["apiKey"];
+            configuration.UrlBase = conf["urlBase"];
+            configuration.UrlWeather = conf["urlWeather"];
+            configuration.UrlForecast = conf["urlForecast"];
+            configuration.UrlLocationCity = conf["urlLocationCity"];
+            configuration.Days = int.Parse(conf["days"]);
+            configuration.IsDebug = bool.Parse(conf["isDebug"]);
+
+            return configuration;
+        }
     }
 }

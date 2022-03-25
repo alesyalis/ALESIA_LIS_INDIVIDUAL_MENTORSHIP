@@ -2,6 +2,7 @@
 using AppConfiguration.Extentions;
 using Weather.BL.Services;
 using Weather.BL.Services.Abstract;
+using Weather.BL.Validators.Abstract;
 
 namespace Weather.WebAPI.Extensions
 {
@@ -12,10 +13,11 @@ namespace Weather.WebAPI.Extensions
             services.AddSingleton<IConfig>(context =>
             {
                 var config = new Config();
-                config.PopulateConfigFromAppConfig();
+                config.GetWebAPIConfig();
                 return config;
             });
             services.AddScoped<IWeatherService, WeatherService>();
+            services.AddScoped<IValidator, Validator>();
 
             return services;
         }
