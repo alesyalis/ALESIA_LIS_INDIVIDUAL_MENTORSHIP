@@ -6,6 +6,9 @@ using System.Net.Http;
 using AppConfiguration.AppConfig;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Diagnostics;
+using System;
 
 namespace Weather.DataAccess.Repositories
 {
@@ -21,7 +24,7 @@ namespace Weather.DataAccess.Repositories
             _configuration = configuration;
         }
 
-        public async Task<WeatherResponse> GetWeatherAsync(string cityName)
+        public async Task<WeatherResponse> GetWeatherAsync(string cityName, CancellationTokenSource token)
         {
             var urlBase = _configuration.UrlBase;
             var urlWeather = _configuration.UrlWeather;
@@ -29,6 +32,22 @@ namespace Weather.DataAccess.Repositories
             var responce = await _httpClient.GetAsync($"{urlBase}{urlWeather}={cityName}&units=metric&appid={key}");
             var responceBody = await responce.Content.ReadAsStringAsync();
             var weatherResponсe = JsonConvert.DeserializeObject<WeatherResponse>(responceBody);
+
+            try
+            {
+                if (token.IsCancellationRequested)
+                {
+                    token.Token.ThrowIfCancellationRequested();
+                }
+            }
+            catch(OperationCanceledException)
+            {
+            }
+            finally
+            {
+                token.Dispose();
+            }
+
             return weatherResponсe;
         }
         public async Task<ForecastResponse> GetForecastAsync(string cityName, int days)
@@ -57,15 +76,23 @@ namespace Weather.DataAccess.Repositories
             return locationResponсe;
         }
 
-        public async Task<IEnumerable<WeatherResponse>> GetListWeatherAsync(IEnumerable<string> cityName)
+        public async Task<IEnumerable<WeatherResponse>> GetListWeatherAsync(IEnumerable<string> cityName, CancellationTokenSource token)
         {
+            token.CancelAfter(600);
+
             var tasks = cityName.Select(async city =>
             {
-                var listWeatherResponse = await GetWeatherAsync(city);
+                var listWeatherResponse = await GetWeatherAsync(city, token);
                 return listWeatherResponse;
             }).ToList();
-
+           
             var results = await Task.WhenAll(tasks);
+
+            for(int i = 0; i < results.Count(); i++)
+            {
+                results[i].Status = tasks[i].Status.ToString();
+            }
+
             return results?.ToList();
         }
     }
