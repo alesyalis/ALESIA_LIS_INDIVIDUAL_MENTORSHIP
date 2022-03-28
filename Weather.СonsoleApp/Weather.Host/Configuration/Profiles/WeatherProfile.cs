@@ -9,6 +9,7 @@ namespace Weather.Host.Configuration.Profiles
         {
             CreateMap<WeatherResponse, WeatherResponseDTO>();
             CreateMap<TemperatureInfo, TemperatureInfoDTO>();
+            CreateMap<WeatherHistory, WeatherHistoryDTO>(); 
         }
     }
 }
