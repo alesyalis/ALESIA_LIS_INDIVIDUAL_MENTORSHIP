@@ -1,25 +1,60 @@
-var builder = WebApplication.CreateBuilder(args);
+using AppConfiguration.AppConfig;
+using Serilog;
+using Weather.Host.Extension;
 
-// Add services to the container.
-builder.Services.AddRazorPages();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+public class Program
 {
-    app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    public static void Main(string[] args)
+        => CreateHostBuilder(args).Build().Run();
+
+    // EF Core uses this method at design time to access the DbContext
+    public static IHostBuilder CreateHostBuilder(string[] args)
+        => Host.CreateDefaultBuilder(args)
+            .ConfigureWebHostDefaults(
+                webBuilder => webBuilder.UseStartup<Startup>());
 }
 
-app.UseHttpsRedirection();
-app.UseStaticFiles();
+public class Startup
+{
+    public IConfiguration Configuration { get; }
 
-app.UseRouting();
+    public Startup(IConfiguration configuration)
+    {
+        Configuration = configuration;
+       // Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(Config).CreateLogger();
+    }
 
-app.UseAuthorization();
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddRepositories();
+        services.AddServices();
+        services.AddLogging(x => x.AddSerilog());
 
-app.MapRazorPages();
+        services.AddControllers();
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen();
+    }
 
-app.Run();
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+
+        if (env.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Weather.Host v1"));
+        }
+
+        app.UseRouting();
+
+        app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
+        app.UseHttpsRedirection();
+
+        app.UseAuthorization();
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+        });
+    }
+}

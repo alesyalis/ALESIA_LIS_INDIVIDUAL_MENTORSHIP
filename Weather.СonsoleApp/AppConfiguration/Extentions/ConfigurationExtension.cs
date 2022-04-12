@@ -29,5 +29,21 @@ namespace AppConfiguration.Extentions
 
             return configurationRoot;
         }
+
+        public static Config GetConfig(this Config configurationRoot)
+        {
+            var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+
+            configurationRoot.ApiKey = configuration["apiKey"];
+            configurationRoot.UrlBase = configuration["urlBase"];
+            configurationRoot.UrlWeather = configuration["urlWeather"];
+            configurationRoot.UrlForecast = configuration["urlForecast"];
+            configurationRoot.UrlLocationCity = configuration["urlLocationCity"];
+            configurationRoot.Days = int.Parse(configuration["days"]);
+            configurationRoot.IsDebug = bool.Parse(configuration["isDebug"]);
+            configurationRoot.Canceled = int.Parse(configuration["canceled"]);
+
+            return configurationRoot;
+        }
     }
 }
