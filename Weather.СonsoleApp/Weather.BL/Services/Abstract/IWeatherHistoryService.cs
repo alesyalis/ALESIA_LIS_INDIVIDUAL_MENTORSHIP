@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Weather.BL.DTOs;
 
 namespace Weather.BL.Services.Abstract
 {
     public interface IWeatherHistoryService
     {
+        Task AddWeatherHistoryAsync(CityDTO city, CancellationTokenSource token);
+        Task<List<WeatherHistoryDTO>> GetWeatherHistoriesAsync(string cityName, DateTime from, DateTime to);
     }
 }

@@ -1,6 +1,11 @@
 using AppConfiguration.AppConfig;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Weather.BL.Mapping;
+using Weather.DataAccess.Configuration;
 using Weather.Host.Extension;
+using AppConfiguration.Constants;
+using Hangfire;
 
 public class Program
 {
@@ -26,13 +31,23 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        var connectionString = Configuration.GetConnectionString(Connection.ConnectionString);
+        services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+
         services.AddRepositories();
         services.AddServices();
+        services.AddAutoMapper();
         services.AddLogging(x => x.AddSerilog());
+        services.AddHangfire(x => x.UseSqlServerStorage(connectionString));
+        services.AddHangfireServer();
+        services.AddLogging(opt => opt.AddSimpleConsole());
 
         services.AddControllers();
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
+        services.AddSwaggerGen(c =>
+        {
+            c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "WeatherApi", Version = "v1" });
+        });
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -41,7 +56,8 @@ public class Startup
         if (env.IsDevelopment())
         {
             app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Weather.Host v1"));
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WeatherApi v1"));
+            app.UseHangfireDashboard("/dashboard");
         }
 
         app.UseRouting();

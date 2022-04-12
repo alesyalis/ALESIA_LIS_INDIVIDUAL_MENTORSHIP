@@ -17,9 +17,10 @@ namespace Weather.Host.Extension
 
                 return config;
             });
-            services.AddScoped<IWeatherService, WeatherService>();
-            services.AddScoped<IValidator, Validator>();
-            //services.AddScoped<IWeatherHistoryService, WeatherHistoryService>();
+            services.AddTransient<IWeatherService, WeatherService>();
+            services.AddTransient<IValidator, Validator>();
+            services.AddTransient<IWeatherHistoryService, WeatherHistoryService>();
+            services.AddTransient<IBackgroundJobService, BackgroundJobService>();
 
             return services;
         }
