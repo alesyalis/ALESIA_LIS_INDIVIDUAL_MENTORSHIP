@@ -26,13 +26,12 @@ public class Startup
     public Startup(IConfiguration configuration)
     {
         Configuration = configuration;
-       // Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(Config).CreateLogger();
     }
 
     public void ConfigureServices(IServiceCollection services)
     {
         var connectionString = Configuration.GetConnectionString(Connection.ConnectionString);
-        services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+        services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Scoped);
 
         services.AddRepositories();
         services.AddServices();

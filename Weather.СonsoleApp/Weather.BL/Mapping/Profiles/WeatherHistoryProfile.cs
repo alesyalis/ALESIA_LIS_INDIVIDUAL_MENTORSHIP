@@ -10,8 +10,8 @@ namespace Weather.BL.Mapping.Profiles
     {
         public WeatherHistoryProfile()
         {
-            CreateMap<WeatherHistory, WeatherResponse>()
-                //.ForMember(dto => dto.Main.Temp, src => src.MapFrom(entity => entity.Temp))
+            CreateMap<WeatherResponse,WeatherHistory>()
+                .ForMember(dto => dto.Temp, src => src.MapFrom(entity => entity.Main.Temp))
                 .ForMember(dto => dto.Id, src => src.MapFrom(entity => entity.Id))
                 .ReverseMap();
         }
