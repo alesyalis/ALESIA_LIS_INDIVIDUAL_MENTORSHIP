@@ -7,8 +7,8 @@ namespace Weather.Host.Extension
     {
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
-            services.AddScoped<IWeatherRepository, WeatherRepository>();
-            services.AddScoped<IWeatherHistoryRepository, WeatherHistoryRepository>();
+            services.AddSingleton<IWeatherRepository, WeatherRepository>();
+            services.AddSingleton<IWeatherHistoryRepository, WeatherHistoryRepository>();
 
             return services;
         }

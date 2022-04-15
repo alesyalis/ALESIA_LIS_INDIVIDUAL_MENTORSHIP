@@ -2,6 +2,7 @@
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Weather.BL.DTOs;
@@ -16,6 +17,7 @@ namespace Weather.BL.Services
         private readonly IWeatherHistoryRepository _weatherHistoryRepository;
         private readonly IWeatherRepository _weatherRepository;
         private readonly IMapper _mapper;
+        private CancellationTokenSource _cancellationTokenSource;
 
         public WeatherHistoryService(IWeatherHistoryRepository weatherHistoryRepository, IWeatherRepository weatherRepository,
             IMapper mapper)
@@ -23,30 +25,45 @@ namespace Weather.BL.Services
             _weatherHistoryRepository = weatherHistoryRepository;
             _weatherRepository = weatherRepository;
             _mapper = mapper;
+            _cancellationTokenSource = new CancellationTokenSource();   
         }
 
-        public async Task AddWeatherHistoryAsync(CityDTO city, CancellationTokenSource token)
-        {
-           // Log.Information("Method AddWeatherHistoryAsync has been run!");
+        //public async Task AddWeatherHistoryAsync(CityDTO city, CancellationTokenSource token)
+        //{
 
-            var weather = await _weatherRepository.GetWeatherAsync(city.CityName, token);
-            var weatherHistory = new WeatherHistory
+        //    var weather = await _weatherRepository.GetWeatherAsync(city.CityName, token);
+        //    var weatherHistory = new WeatherHistory
+        //    {
+        //        Timestamp = DateTime.Now,
+        //        CityId = city.Id,
+        //        Temp = weather.Main.Temp
+        //    };
+
+        //    await _weatherHistoryRepository.CreateAsync(weatherHistory);
+
+        //}
+
+        public async Task BackgroundSaveWeatherAsync(IEnumerable<string> cities)
+        {
+            var weathers = cities.Select(async x =>
             {
-                Timestamp = DateTime.Now,
-                CityId = city.Id,
-                Temp = weather.Main.Temp
-            };
+                var weatherRespons = await _weatherRepository.GetWeatherAsync(x, _cancellationTokenSource);
+                var weathers = _mapper.Map<WeatherHistory>(weatherRespons);
+                weathers.DateTime = DateTime.Now;
+                return weathers;
 
-            await _weatherHistoryRepository.CreateAsync(weatherHistory);
+            });
 
-            //Log.Information("Method AddWeatherHistoryAsync is complited!");
+            var result =await Task.WhenAll(weathers);
+            
+            await _weatherHistoryRepository.BulkSaveAsync(result);
+            //await _weatherHistoryRepository.BalkSaveWeatherAsync(result);
+
         }
 
-        public async Task<List<WeatherHistoryDTO>> GetWeatherHistoriesAsync(string cityName, DateTime from, DateTime to)
+        public Task<List<WeatherHistoryDTO>> GetWeatherHistoriesAsync(string cityName, DateTime from, DateTime to)
         {
-            var histories = await _weatherHistoryRepository.GetWeatherHistoriesAsync(cityName, from, to);
-
-            return _mapper.Map<List<WeatherHistoryDTO>>(histories);
+            throw new NotImplementedException();
         }
     }
 }

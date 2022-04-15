@@ -11,7 +11,7 @@ namespace Weather.DataAccess.Repositories.Abstrdact
 
          Task<TEntity> CreateAsync(TEntity entity);
 
-         Task BulkSaveAsync(List<TEntity> entity);   
+         Task BulkSaveAsync(IEnumerable<TEntity> entity);   
 
     }
 }

@@ -6,12 +6,11 @@ namespace Weather.DataAccess.Models
     {
         public int Id { get; set; } 
 
-        public int CityId { get; set; }
+        public string CityName { get; set; }
 
-        public DateTime Timestamp { get; set; }
+        public DateTime DateTime { get; set; }
 
         public double Temp { get; set; }
 
-        public City City { get; set; }  
     }
 }

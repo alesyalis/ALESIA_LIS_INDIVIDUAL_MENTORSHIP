@@ -19,7 +19,7 @@ namespace Weather.DataAccess.Migrations
                 .HasAnnotation("ProductVersion", "5.0.16")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Weather.DataAccess.Models.City", b =>
+            modelBuilder.Entity("Weather.DataAccess.Models.WeatherHistory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -29,48 +29,15 @@ namespace Weather.DataAccess.Migrations
                     b.Property<string>("CityName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
-
-                    b.ToTable("Cities");
-                });
-
-            modelBuilder.Entity("Weather.DataAccess.Models.WeatherHistory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("CityId")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<double>("Temp")
                         .HasColumnType("float");
 
-                    b.Property<DateTime>("Timestamp")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("CityId");
-
                     b.ToTable("WeatherHistories");
-                });
-
-            modelBuilder.Entity("Weather.DataAccess.Models.WeatherHistory", b =>
-                {
-                    b.HasOne("Weather.DataAccess.Models.City", "City")
-                        .WithMany("WeatherHistories")
-                        .HasForeignKey("CityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("City");
-                });
-
-            modelBuilder.Entity("Weather.DataAccess.Models.City", b =>
-                {
-                    b.Navigation("WeatherHistories");
                 });
 #pragma warning restore 612, 618
         }

@@ -16,7 +16,7 @@ namespace Weather.DataAccess.Repositories.Abstrdact
             _context = context; 
             _dbSet = _context.Set<TEntity>();   
         }
-        public async Task BulkSaveAsync(List<TEntity> entity)
+        public async Task BulkSaveAsync(IEnumerable<TEntity> entity)
         {
             await _dbSet.AddRangeAsync(entity);
             await _context.SaveChangesAsync();

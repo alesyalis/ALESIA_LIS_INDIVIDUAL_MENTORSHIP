@@ -1,68 +1,42 @@
-﻿using AutoMapper;
-using Hangfire;
+﻿using Hangfire;
 using Hangfire.Storage;
-using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Weather.BL.DTOs;
+using Weather.BL.Configuration;
 using Weather.BL.Services.Abstract;
-using Weather.DataAccess.Models;
-using Weather.DataAccess.Repositories.Abstrdact;
 
 namespace Weather.BL.Services
 {
     public class BackgroundJobService : IBackgroundJobService
     {
-        private readonly IWeatherHistoryRepository _weatherHistoryRepository;
+        private readonly IWeatherHistoryService _weatherHistoryService;
         private readonly IRecurringJobManager _recurringJobManager;
-        private readonly IWeatherRepository _weatherRepository;
         private readonly JobStorage _jobStorage;
-        private readonly IMapper _mapper;
-        private CancellationTokenSource _cancellationTokenSource;
-        private readonly ILogger<BackgroundJobService> _logger;
 
-        public BackgroundJobService(IWeatherHistoryRepository weatherHistoryRepository,
+        public BackgroundJobService(IWeatherHistoryService weatherHistoryService,
             IRecurringJobManager recurringJobManager,
-            IWeatherRepository weatherRepository,
-            JobStorage jobStorage,
-            IMapper mapper,
-            ILogger<BackgroundJobService> logger)
+            JobStorage jobStorage)
         {
-            _weatherHistoryRepository = weatherHistoryRepository;
-            _weatherRepository = weatherRepository;
+            _weatherHistoryService = weatherHistoryService;
             _jobStorage = jobStorage;
             _recurringJobManager = recurringJobManager;
-            _mapper = mapper;
-            _cancellationTokenSource = new CancellationTokenSource();
-            _logger = logger;
         }
-        public Task UpdateJob(IEnumerable<CityOptionDTO> cityOptions)
+        public void UpdateJobs(IEnumerable<CityOption> cityOptions)
         {
-            var currentArrayCitties = _jobStorage.GetConnection().GetRecurringJobs().Select(x => x.Id).ToList();
-            var newArrayCities = cityOptions.Select(x => x.CityName.ToLower()).ToList();
-            currentArrayCitties.Except(newArrayCities).ToList().ForEach(x => _recurringJobManager.RemoveIfExists(x));
+            var currentJobs = _jobStorage.GetConnection().GetRecurringJobs()
+                .Select(x => new { Name = x.Id, Timeout = x.Cron }).ToList();
 
-            cityOptions.ToList().ForEach(x => _recurringJobManager.AddOrUpdate(x.CityName.ToLower(), () => GetWeather(x.CityName), Cron.MinuteInterval(x.Timeout)));
-            return Task.CompletedTask;
+            var dictionarunewJobs = cityOptions.GroupBy(x => Cron.MinuteInterval(x.TimeOut))
+                .ToDictionary(k => k.Key, v => v.Select(x => x.CityName)).ToList();
+            var newJobs = dictionarunewJobs.Select(x => new {Name = GetJobName(x.Value), Timeout = x.Key})
+                .ToList();
+             var remoutJobs = currentJobs.Where(c => !newJobs.Any(n => n.Name == c.Name && n.Timeout == c.Timeout)).ToList();
+            dictionarunewJobs.ForEach(x => _recurringJobManager.AddOrUpdate(GetJobName(x.Value),
+                () => _weatherHistoryService.BackgroundSaveWeatherAsync(x.Value), x.Key));
         }
-
-        public async Task GetWeather(string cityName)
+        private string GetJobName(IEnumerable<string> cities)
         {
-            try
-            {
-                var weatherdto = _weatherRepository.GetWeatherAsync(cityName, _cancellationTokenSource);
-                var weather = _mapper.Map<WeatherHistory>(weatherdto);
-                weather.Timestamp = DateTime.Now;
-                await _weatherHistoryRepository.CreateAsync(weather);
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-            }
-
+            return cities.OrderBy(c => c).Aggregate((result, next) => $"{result}; {next}").ToLower();
         }
     }
 }

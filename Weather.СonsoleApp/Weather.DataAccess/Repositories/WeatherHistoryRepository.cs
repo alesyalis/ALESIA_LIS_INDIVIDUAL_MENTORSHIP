@@ -14,15 +14,21 @@ namespace Weather.DataAccess.Repositories
     {
         public WeatherHistoryRepository(ApplicationDbContext context) : base(context)
         {
-
         }
         public async Task<List<WeatherHistory>> GetWeatherHistoriesAsync(string citiName, DateTime dateTimeFrom, DateTime dateTimeTo)
         {
             return await _context.WeatherHistories.AsNoTracking()
-                .Where(x => x.City.CityName.ToLower() == citiName.ToLower()
-                         && x.Timestamp.Date >= dateTimeFrom
-                         && x.Timestamp.Date <= dateTimeTo)
+                .Where(x => x.CityName.ToLower() == citiName.ToLower()
+                         && x.DateTime.Date >= dateTimeFrom
+                         && x.DateTime.Date <= dateTimeTo)
                 .ToListAsync(); 
+        }
+
+
+        public async Task BalkSaveWeatherAsync(IEnumerable<WeatherHistory> weatherHistories)
+        {
+            await _context.WeatherHistories.AddRangeAsync(weatherHistories);  
+            await _context.SaveChangesAsync();  
         }
     }
 }

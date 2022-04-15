@@ -6,6 +6,7 @@ using Weather.DataAccess.Configuration;
 using Weather.Host.Extension;
 using AppConfiguration.Constants;
 using Hangfire;
+using Weather.BL.Configuration;
 
 public class Program
 {
@@ -31,8 +32,11 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         var connectionString = Configuration.GetConnectionString(Connection.ConnectionString);
-        services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Scoped);
+        services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Singleton);
+        services.Configure<BackgroundJobConfiguration>(Configuration.GetSection(nameof(BackgroundJobConfiguration)));
+        services.Configure<RouteOptions>(o => o.LowercaseUrls = true);
 
+        services.AddStartupFilter();
         services.AddRepositories();
         services.AddServices();
         services.AddAutoMapper();

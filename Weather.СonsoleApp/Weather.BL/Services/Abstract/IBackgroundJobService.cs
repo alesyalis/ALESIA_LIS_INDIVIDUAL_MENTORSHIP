@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Weather.BL.DTOs;
+﻿using System.Collections.Generic;
+using Weather.BL.Configuration;
 
 namespace Weather.BL.Services.Abstract
 {
     public interface IBackgroundJobService
     {
-        Task UpdateJob(IEnumerable<CityOptionDTO> cityOptions);
+        void UpdateJobs(IEnumerable<CityOption> cityOptions);
     }
 }
