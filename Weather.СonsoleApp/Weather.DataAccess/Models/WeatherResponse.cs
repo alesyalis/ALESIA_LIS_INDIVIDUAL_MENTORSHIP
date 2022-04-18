@@ -2,7 +2,7 @@
 {
     public class WeatherResponse
     {
-        public int Id { get; set; }
+       // public int Id { get; set; }
         public TemperatureInfo Main { get; set; }
 
         public string Name { get; set; }

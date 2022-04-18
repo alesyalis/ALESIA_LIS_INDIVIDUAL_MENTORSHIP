@@ -16,10 +16,7 @@ namespace Weather.Host.Infrastructure
             _configBackgroundJob = configBackgroundJob; 
         }
         public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
-        {
-            //_configBackgroundJob.OnChange(c => _backgroundJobClient.Enqueue<IBackgroundJobService>(x => x.UpdateJobs(c.CityOptions)));
-            //_backgroundJobClient.Enqueue<IBackgroundJobService>(x => x.UpdateJobs(_configBackgroundJob.CurrentValue.CityOptions));
-            //return next;    
+        {   
             _configBackgroundJob.OnChange(c => EnqueueBackgroundJob());
             EnqueueBackgroundJob();
             return next;

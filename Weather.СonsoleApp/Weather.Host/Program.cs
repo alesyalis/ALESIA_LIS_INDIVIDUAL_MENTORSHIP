@@ -60,7 +60,7 @@ public class Startup
         {
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WeatherApi v1"));
-            app.UseHangfireDashboard("/dashboard");
+           app.UseHangfireDashboard("/dashboard");
         }
 
         app.UseRouting();

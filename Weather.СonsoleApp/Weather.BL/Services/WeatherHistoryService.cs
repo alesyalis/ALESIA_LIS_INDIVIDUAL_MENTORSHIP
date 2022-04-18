@@ -28,21 +28,6 @@ namespace Weather.BL.Services
             _cancellationTokenSource = new CancellationTokenSource();   
         }
 
-        //public async Task AddWeatherHistoryAsync(CityDTO city, CancellationTokenSource token)
-        //{
-
-        //    var weather = await _weatherRepository.GetWeatherAsync(city.CityName, token);
-        //    var weatherHistory = new WeatherHistory
-        //    {
-        //        Timestamp = DateTime.Now,
-        //        CityId = city.Id,
-        //        Temp = weather.Main.Temp
-        //    };
-
-        //    await _weatherHistoryRepository.CreateAsync(weatherHistory);
-
-        //}
-
         public async Task BackgroundSaveWeatherAsync(IEnumerable<string> cities)
         {
             var weathers = cities.Select(async x =>
@@ -56,14 +41,15 @@ namespace Weather.BL.Services
 
             var result =await Task.WhenAll(weathers);
             
-            await _weatherHistoryRepository.BulkSaveAsync(result);
-            //await _weatherHistoryRepository.BalkSaveWeatherAsync(result);
+            //await _weatherHistoryRepository.BulkSaveAsync(result);
+            await _weatherHistoryRepository.BalkSaveWeatherAsync(result);
 
         }
 
-        public Task<List<WeatherHistoryDTO>> GetWeatherHistoriesAsync(string cityName, DateTime from, DateTime to)
+        public async Task<List<WeatherHistoryDTO>> GetWeatherHistoriesAsync(string cityName, DateTime dateTimeFrom, DateTime dateTimeTo)
         {
-            throw new NotImplementedException();
+            var weatherHistories = await _weatherHistoryRepository.GetWeatherHistoriesAsync(cityName, dateTimeFrom, dateTimeTo);
+            return _mapper.Map<List<WeatherHistoryDTO>>(weatherHistories);
         }
     }
 }

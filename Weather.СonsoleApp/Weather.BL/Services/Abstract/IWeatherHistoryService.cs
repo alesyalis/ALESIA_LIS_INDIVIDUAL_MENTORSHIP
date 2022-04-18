@@ -8,8 +8,7 @@ namespace Weather.BL.Services.Abstract
 {
     public interface IWeatherHistoryService
     {
-        //Task AddWeatherHistoryAsync(CityDTO city, CancellationTokenSource token);
-        Task<List<WeatherHistoryDTO>> GetWeatherHistoriesAsync(string cityName, DateTime from, DateTime to);
-        Task BackgroundSaveWeatherAsync(IEnumerable<string> cities);
+        Task<List<WeatherHistoryDTO>> GetWeatherHistoriesAsync(string cityName, DateTime dateTimeFrom, DateTime dateTimeTo);
+         Task BackgroundSaveWeatherAsync(IEnumerable<string> cities);
     }
 }

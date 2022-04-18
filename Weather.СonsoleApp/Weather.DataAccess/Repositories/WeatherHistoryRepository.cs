@@ -19,12 +19,11 @@ namespace Weather.DataAccess.Repositories
         {
             return await _context.WeatherHistories.AsNoTracking()
                 .Where(x => x.CityName.ToLower() == citiName.ToLower()
-                         && x.DateTime.Date >= dateTimeFrom
-                         && x.DateTime.Date <= dateTimeTo)
-                .ToListAsync(); 
+                         && x.DateTime.Date >= dateTimeFrom.Date
+                         && x.DateTime.Date <= dateTimeTo.Date)
+                .ToListAsync();
         }
-
-
+       
         public async Task BalkSaveWeatherAsync(IEnumerable<WeatherHistory> weatherHistories)
         {
             await _context.WeatherHistories.AddRangeAsync(weatherHistories);  
