@@ -16,7 +16,9 @@ namespace Weather.BL.Mapping.Profiles
                 .ForMember(dto => dto.CityName , src => src.MapFrom(entity => entity.Name))
                 .ForMember(dto => dto.Id, src => src.Ignore())
                 .ReverseMap();
-            CreateMap<WeatherHistoryDTO, WeatherHistory>().ReverseMap();
+            CreateMap<WeatherHistoryDTO, WeatherHistory>()
+                .ForMember(dto => dto.DateTime, src => src.MapFrom(entity => entity.Timestamp))
+                .ReverseMap();
         }
     }
 }

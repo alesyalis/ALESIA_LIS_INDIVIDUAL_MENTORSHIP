@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,8 +40,7 @@ namespace Weather.BL.Services
 
             var result =await Task.WhenAll(weathers);
             
-            //await _weatherHistoryRepository.BulkSaveAsync(result);
-            await _weatherHistoryRepository.BalkSaveWeatherAsync(result);
+            await _weatherHistoryRepository.BulkSaveAsync(result);
 
         }
 
