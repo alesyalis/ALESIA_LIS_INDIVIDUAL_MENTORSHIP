@@ -34,13 +34,7 @@ namespace Weather.WebAPI
 
             services.AddControllers();
             services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen(opt =>
-            {
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-
-                opt.IncludeXmlComments(xmlPath);
-            });
+            services.AddSwaggerGen();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
