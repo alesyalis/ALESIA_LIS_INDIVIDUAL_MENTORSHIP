@@ -26,7 +26,7 @@ namespace Weather.DataAccess.Repositories
 
         public async Task<WeatherResponse> GetWeatherAsync(string cityName, CancellationTokenSource token)
         {
-            var urlBase = _configuration.UrlBase;
+          var urlBase = _configuration.UrlBase;
             var urlWeather = _configuration.UrlWeather;
             var key = _configuration.ApiKey;
             var responce = await _httpClient.GetAsync($"{urlBase}{urlWeather}={cityName}&units=metric&appid={key}");

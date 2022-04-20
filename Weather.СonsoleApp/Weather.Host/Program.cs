@@ -1,25 +1,79 @@
-var builder = WebApplication.CreateBuilder(args);
+using AppConfiguration.AppConfig;
+using Microsoft.EntityFrameworkCore;
+using Serilog;
+using Weather.BL.Mapping;
+using Weather.DataAccess.Configuration;
+using Weather.Host.Extension;
+using AppConfiguration.Constants;
+using Hangfire;
+using Weather.BL.Configuration;
 
-// Add services to the container.
-builder.Services.AddRazorPages();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+public class Program
 {
-    app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    public static void Main(string[] args)
+        => CreateHostBuilder(args).Build().Run();
+
+    // EF Core uses this method at design time to access the DbContext
+    public static IHostBuilder CreateHostBuilder(string[] args)
+        => Host.CreateDefaultBuilder(args)
+            .ConfigureWebHostDefaults(
+                webBuilder => webBuilder.UseStartup<Startup>());
 }
 
-app.UseHttpsRedirection();
-app.UseStaticFiles();
+public class Startup
+{
+    public IConfiguration Configuration { get; }
 
-app.UseRouting();
+    public Startup(IConfiguration configuration)
+    {
+        Configuration = configuration;
+    }
 
-app.UseAuthorization();
+    public void ConfigureServices(IServiceCollection services)
+    {
+        var connectionString = Configuration.GetConnectionString(Connection.ConnectionString);
+        services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Singleton);
+        services.Configure<BackgroundJobConfiguration>(Configuration.GetSection(nameof(BackgroundJobConfiguration)));
+        services.Configure<RouteOptions>(o => o.LowercaseUrls = true);
 
-app.MapRazorPages();
+        services.AddStartupFilter();
+        services.AddRepositories();
+        services.AddServices();
+        services.AddAutoMapper();
+        services.AddLogging(x => x.AddSerilog());
+        services.AddHangfire(x => x.UseSqlServerStorage(connectionString));
+        services.AddHangfireServer();
+        services.AddLogging(opt => opt.AddSimpleConsole());
 
-app.Run();
+        services.AddControllers();
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen(c =>
+        {
+            c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "WeatherApi", Version = "v1" });
+        });
+    }
+
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+
+        if (env.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WeatherApi v1"));
+           app.UseHangfireDashboard("/dashboard");
+        }
+
+        app.UseRouting();
+
+        app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
+        app.UseHttpsRedirection();
+
+        app.UseAuthorization();
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+        });
+    }
+}
